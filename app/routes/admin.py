@@ -95,7 +95,10 @@ def dashboard():
         "symptoms": True   # Evidence-based Clinical Triage Engine
     }
 
-    recent_logs = AdminModel.get_recent_logs(limit=10)
+    try:
+        recent_logs = AdminModel.get_recent_logs(limit=10)
+    except Exception:
+        recent_logs = []
 
     return render_template(
         "admin/dashboard.html", 
@@ -108,7 +111,10 @@ def dashboard():
 @admin_required
 def user_management():
     """Admin User Management Console."""
-    users_list = UserModel.get_all_users()
+    try:
+        users_list = UserModel.get_all_users()
+    except Exception:
+        users_list = []
     return render_template("admin/users.html", users=users_list)
 
 @admin_bp.route("/users/<int:user_id>/role", methods=["POST"])
@@ -160,7 +166,10 @@ def delete_user(user_id):
 @admin_required
 def medicine_management():
     """Admin Medicine & Pharmacopeia Management Console."""
-    medicines = AdminModel.get_all_medicines()
+    try:
+        medicines = AdminModel.get_all_medicines()
+    except Exception:
+        medicines = []
     return render_template("admin/medicines.html", medicines=medicines)
 
 @admin_bp.route("/medicines/add", methods=["POST"])
@@ -225,7 +234,10 @@ def delete_medicine(med_id):
 @admin_required
 def system_logs():
     """System activity audit log viewer."""
-    logs = AdminModel.get_recent_logs(limit=50)
+    try:
+        logs = AdminModel.get_recent_logs(limit=50)
+    except Exception:
+        logs = []
     return render_template("admin/logs.html", logs=logs)
 
 @admin_bp.route("/logout")

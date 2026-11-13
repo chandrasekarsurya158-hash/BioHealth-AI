@@ -16,7 +16,8 @@ def get_db_connection():
         port=Config.DB_PORT,
         cursorclass=DictCursor,
         autocommit=True,
-        charset='utf8mb4'
+        charset='utf8mb4',
+        connect_timeout=3
     )
 
 @contextmanager

@@ -19,8 +19,16 @@ class Config:
     DB_NAME = os.environ.get("DB_NAME", "multi_disease_db")
     DB_PORT = int(os.environ.get("DB_PORT", 3306))
     
+    # Serverless cloud environment detection (Vercel, AWS Lambda, Render, etc.)
+    IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+    
     # Upload Directories
-    UPLOAD_FOLDER = BASE_DIR / "app" / "static" / "uploads"
+    # On serverless platforms (like Vercel), root filesystem is read-only; use /tmp for ephemeral uploads
+    if IS_SERVERLESS:
+        UPLOAD_FOLDER = Path("/tmp") / "uploads"
+    else:
+        UPLOAD_FOLDER = BASE_DIR / "app" / "static" / "uploads"
+
     PLANT_UPLOAD_FOLDER = UPLOAD_FOLDER / "plant"
     CROP_UPLOAD_FOLDER = UPLOAD_FOLDER / "crop"
     SKIN_UPLOAD_FOLDER = UPLOAD_FOLDER / "skin"

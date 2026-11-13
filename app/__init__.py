@@ -10,16 +10,21 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    # Ensure all required upload directories exist
+    # Ensure all required upload directories exist (guarded for read-only serverless filesystems)
     upload_dirs = [
-        app.config["PLANT_UPLOAD_FOLDER"],
-        app.config["CROP_UPLOAD_FOLDER"],
-        app.config["SKIN_UPLOAD_FOLDER"],
-        app.config["XRAY_UPLOAD_FOLDER"],
-        app.config["BLOOD_REPORT_FOLDER"],
+        app.config.get("PLANT_UPLOAD_FOLDER"),
+        app.config.get("CROP_UPLOAD_FOLDER"),
+        app.config.get("SKIN_UPLOAD_FOLDER"),
+        app.config.get("XRAY_UPLOAD_FOLDER"),
+        app.config.get("BLOOD_REPORT_FOLDER"),
     ]
     for directory in upload_dirs:
-        os.makedirs(directory, exist_ok=True)
+        if directory:
+            try:
+                os.makedirs(directory, exist_ok=True)
+            except OSError:
+                # Read-only filesystem in cloud serverless environments (e.g., Vercel)
+                pass
         
     # Register blueprints for all 17 pages across the 4 modules
     from app.routes.main import main_bp
@@ -42,5 +47,9 @@ def create_app(config_class=Config):
     @app.errorhandler(403)
     def forbidden_error(error):
         return render_template("errors/403.html"), 403
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return render_template("errors/500.html"), 500
 
     return app
