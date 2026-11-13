@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}BioHealth AI - Home & Overview{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white py-5">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="badge bg-success mb-3 px-3 py-2 text-uppercase letter-spacing-1">
+                    <i class="bi bi-cpu me-1"></i> Unified Dual-Domain AI Framework
+                </span>
+                <h1 class="display-4 fw-bold mb-3">
+                    Multi-Domain AI-Based Disease Detection & Health Assistance
+                </h1>
+                <p class="lead text-light opacity-90 mb-4">
+                    An integrated web application bridging precision agriculture and clinical health intelligence.
+                    Powered by specialized Computer Vision models, clinical document parsing, and verified medical reference systems.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#modules" class="btn btn-success btn-lg px-4 shadow">
+                        <i class="bi bi-grid-fill me-2"></i> Explore 4 Core Modules
+                    </a>
+                    <a href="/health-check" target="_blank" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-activity me-2"></i> API Health Check
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-lg bg-dark text-white rounded-4 p-4 border border-secondary">
+                    <h5 class="fw-bold mb-3 text-success d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check fs-4"></i> Phase 1 System Status
+                    </h5>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3 small">
+                        <li class="d-flex align-items-center justify-content-between p-2 bg-black bg-opacity-25 rounded">
+                            <span><i class="bi bi-folder-check text-success me-2"></i> Directory Architecture</span>
+                            <span class="badge bg-success">Configured</span>
+                        </li>
+                        <li class="d-flex align-items-center justify-content-between p-2 bg-black bg-opacity-25 rounded">
+                            <span><i class="bi bi-filetype-py text-info me-2"></i> Flask 3.0 Backend</span>
+                            <span class="badge bg-success">Operational</span>
+                        </li>
+                        <li class="d-flex align-items-center justify-content-between p-2 bg-black bg-opacity-25 rounded">
+                            <span><i class="bi bi-database text-warning me-2"></i> MySQL / XAMPP Config</span>
+                            <span class="badge bg-info text-dark">Ready for Phase 3</span>
+                        </li>
+                        <li class="d-flex align-items-center justify-content-between p-2 bg-black bg-opacity-25 rounded">
+                            <span><i class="bi bi-cpu-fill text-danger me-2"></i> Separate AI Model Pipelines</span>
+                            <span class="badge bg-secondary">Modular Setup</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modules Overview Section -->
+<section id="modules" class="py-5">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Comprehensive System Modules</h2>
+            <p class="text-muted">Structured into two primary domains: Precision Agriculture and Human Health Assistance</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Module 1: Plant Disease Detection -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 module-card">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="module-icon bg-success bg-opacity-10 text-success mb-3">
+                            <i class="bi bi-flower1 fs-2"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Module 1: Plant Disease</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Plant leaf image classification. Identifies plant disease categories, outputs confidence scores, prevention tips, and detects healthy leaves.
+                        </p>
+                        <span class="badge bg-success-subtle text-success py-2">Deep Learning (Vision)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2: Crop Disease Detection -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 module-card">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="module-icon bg-warning bg-opacity-10 text-warning mb-3">
+                            <i class="bi bi-tree fs-2"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Module 2: Crop Disease</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Dedicated model for staple crops (rice, wheat, maize). Distinct from the plant model with tailored agricultural remedies.
+                        </p>
+                        <span class="badge bg-warning-subtle text-warning py-2">Dedicated Crop Model</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3: Skin Disease Screening -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 module-card">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="module-icon bg-primary bg-opacity-10 text-primary mb-3">
+                            <i class="bi bi-bandaid fs-2"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Module 3: Skin Screening</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Dermatological image classification using research benchmark datasets. Highlights experimental categories with clinical disclaimers.
+                        </p>
+                        <span class="badge bg-primary-subtle text-primary py-2">Medical Screening AI</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 4: Medical Health Assistance -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 module-card">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="module-icon bg-danger bg-opacity-10 text-danger mb-3">
+                            <i class="bi bi-heart-pulse fs-2"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Module 4: Health Suite</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Multi-feature clinical assistant: Symptoms triage, OCR blood report parser, Chest X-ray classification, and medicine guides.
+                        </p>
+                        <span class="badge bg-danger-subtle text-danger py-2">5 Integrated Features</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Module 4 Sub-features Breakdown -->
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="text-primary fw-semibold small text-uppercase letter-spacing-1">Clinical Intelligence</span>
+                <h3 class="fw-bold mt-1 mb-4">Module 4: Five Clinical Assistance Features</h3>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-light">
+                        <i class="bi bi-clipboard2-pulse text-danger fs-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">A. Symptoms-Based Health Assessment</h6>
+                            <p class="small text-muted mb-0">Structured triage for duration, severity, red flag alerts, and urgency advisories.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-light">
+                        <i class="bi bi-file-earmark-medical text-primary fs-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">B. Blood Report Analysis</h6>
+                            <p class="small text-muted mb-0">PyMuPDF + OCR extraction of Hemoglobin, Glucose, WBC, and comparison against normal reference ranges.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-light">
+                        <i class="bi bi-image text-info fs-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">C. Medical Chest X-Ray Analysis</h6>
+                            <p class="small text-muted mb-0">Research image classifier evaluating thoracic conditions with strict radiologist disclaimers.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-light">
+                        <i class="bi bi-capsule text-warning fs-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">E. Medicine Information & Precautions</h6>
+                            <p class="small text-muted mb-0">Verified medicine lookups with usage guidelines, precautions, and contraindications.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" id="architecture">
+                <span class="text-success fw-semibold small text-uppercase letter-spacing-1">Engineering Stack</span>
+                <h3 class="fw-bold mt-1 mb-4">Architecture & Technology Overview</h3>
+                <div class="card border-0 shadow-sm p-4 bg-light rounded-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border">
+                                <span class="text-muted small">Frontend</span>
+                                <h6 class="fw-bold mb-0">HTML5 + Bootstrap 5</h6>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border">
+                                <span class="text-muted small">Backend</span>
+                                <h6 class="fw-bold mb-0">Python Flask 3.0</h6>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border">
+                                <span class="text-muted small">Database</span>
+                                <h6 class="fw-bold mb-0">MySQL (XAMPP)</h6>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border">
+                                <span class="text-muted small">Computer Vision</span>
+                                <h6 class="fw-bold mb-0">TensorFlow / OpenCV</h6>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border">
+                                <span class="text-muted small">Document Extraction</span>
+                                <h6 class="fw-bold mb-0">PyMuPDF + OCR</h6>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border">
+                                <span class="text-muted small">Data Visualization</span>
+                                <h6 class="fw-bold mb-0">Chart.js</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

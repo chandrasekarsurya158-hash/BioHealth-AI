@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Report Analysis - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-4">
+                        <i class="bi bi-file-earmark-medical fs-2"></i>
+                    </div>
+                    <div>
+                        <span class="badge bg-danger mb-1">Module 4B: Document Intelligence</span>
+                        <h3 class="fw-bold mb-0">Blood Test Report Parser</h3>
+                    </div>
+                </div>
+
+                <p class="text-muted">
+                    Upload your laboratory test report in <strong>PDF</strong> or <strong>Image</strong> format. The system parses the document using <strong>PyMuPDF & OCR</strong>, automatically identifies biomarkers (such as Hemoglobin, Fasting Blood Sugar, WBC, RBC, and Lipid Panel), flags abnormal values against laboratory reference ranges, and provides general educational summaries.
+                </p>
+
+                <div class="alert alert-secondary small rounded-3 mb-4">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <strong>Clinical Note:</strong> Individual lab values alone do not form a clinical diagnosis. Abnormal flags must be interpreted by a licensed physician in the context of your complete medical history.
+                </div>
+
+                <form method="POST" action="{{ url_for('medical.blood_report') }}" enctype="multipart/form-data" class="needs-loading">
+                    <!-- Upload Dropzone -->
+                    <div class="upload-zone p-5 text-center rounded-4 border-2 border-dashed mb-4" id="uploadZone">
+                        <input type="file" name="report_file" id="fileInput" class="d-none" accept=".pdf,.png,.jpg,.jpeg" required>
+                        <div id="uploadPrompt">
+                            <i class="bi bi-filetype-pdf text-danger display-4 mb-2"></i>
+                            <h5 class="fw-bold">Upload Lab Report Document</h5>
+                            <p class="text-muted small mb-3">Accepts PDF documents and clear photos/scans (Max: 16 MB)</p>
+                            <button type="button" class="btn btn-outline-danger px-4" onclick="document.getElementById('fileInput').click()">
+                                <i class="bi bi-folder2-open me-1"></i> Choose Document File
+                            </button>
+                        </div>
+                        <div id="imagePreviewContainer" class="d-none mt-3">
+                            <i class="bi bi-file-earmark-check-fill text-success display-4 mb-2"></i>
+                            <div class="d-flex justify-content-center gap-2">
+                                <span class="badge bg-light text-dark border p-2" id="fileNameDisplay">report.pdf</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="removeFileBtn">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light border-0 p-3 rounded-3 mb-4">
+                        <h6 class="fw-bold mb-2"><i class="bi bi-card-checklist me-1 text-danger"></i> Supported Biomarkers Extracted:</h6>
+                        <div class="d-flex flex-wrap gap-2 small text-secondary">
+                            <span class="badge bg-white text-dark border">Hemoglobin (Hb)</span>
+                            <span class="badge bg-white text-dark border">Fasting Blood Glucose</span>
+                            <span class="badge bg-white text-dark border">HbA1c</span>
+                            <span class="badge bg-white text-dark border">Total Leukocyte Count (WBC)</span>
+                            <span class="badge bg-white text-dark border">RBC Count</span>
+                            <span class="badge bg-white text-dark border">Platelets</span>
+                            <span class="badge bg-white text-dark border">Total Cholesterol</span>
+                            <span class="badge bg-white text-dark border">Triglycerides</span>
+                            <span class="badge bg-white text-dark border">Serum Creatinine</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow-sm">
+                        <i class="bi bi-file-earmark-text me-2"></i> Extract & Analyze Blood Report
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

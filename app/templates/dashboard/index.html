@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1">Welcome, {{ user_name }}</h2>
+            <p class="text-muted small mb-0">Overview of your agricultural scans and medical health screenings</p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="{{ url_for('dashboard.history') }}" class="btn btn-outline-dark btn-sm">
+                <i class="bi bi-clock-history me-1"></i> View Full History
+            </a>
+            <a href="{{ url_for('dashboard.profile') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-gear me-1"></i> Profile Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards (Live Database Counts) -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Plant Scans</span>
+                        <h3 class="fw-bold text-success mb-0">{{ counts.plant }}</h3>
+                    </div>
+                    <div class="bg-success bg-opacity-10 text-success p-3 rounded-4">
+                        <i class="bi bi-leaf fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Crop Scans</span>
+                        <h3 class="fw-bold text-warning mb-0">{{ counts.crop }}</h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-4">
+                        <i class="bi bi-tree fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Skin Screenings</span>
+                        <h3 class="fw-bold text-primary mb-0">{{ counts.skin }}</h3>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4">
+                        <i class="bi bi-bandaid fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Health & Reports</span>
+                        <h3 class="fw-bold text-danger mb-0">{{ counts.blood + counts.xray + counts.get('symptoms', 0) }}</h3>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-4">
+                        <i class="bi bi-heart-pulse fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Chart & Quick Launch Grid -->
+    <div class="row g-4 mb-4">
+        <!-- Chart.js Visualization -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Analysis Activity Summary</h5>
+                    <span class="badge bg-success-subtle text-success border border-success">Live MySQL Sync</span>
+                </div>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start Launcher -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold mb-3">Quick AI Action Center</h5>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ url_for('agriculture.plant_detection') }}" class="btn btn-outline-success text-start d-flex align-items-center gap-3 p-3 rounded-3">
+                        <i class="bi bi-flower1 fs-4"></i>
+                        <div>
+                            <div class="fw-bold">Analyze Plant Leaf</div>
+                            <small class="text-muted">Upload leaf image for disease diagnosis</small>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('agriculture.crop_detection') }}" class="btn btn-outline-warning text-dark text-start d-flex align-items-center gap-3 p-3 rounded-3">
+                        <i class="bi bi-tree fs-4 text-warning"></i>
+                        <div>
+                            <div class="fw-bold">Check Crop Health</div>
+                            <small class="text-muted">Rice, wheat, or maize screening</small>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('medical.blood_report') }}" class="btn btn-outline-danger text-start d-flex align-items-center gap-3 p-3 rounded-3">
+                        <i class="bi bi-file-earmark-medical fs-4"></i>
+                        <div>
+                            <div class="fw-bold">Upload Blood Report</div>
+                            <small class="text-muted">Extract hemoglobin, glucose, WBC from PDF</small>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('medical.symptoms_assessment') }}" class="btn btn-outline-primary text-start d-flex align-items-center gap-3 p-3 rounded-3">
+                        <i class="bi bi-clipboard2-pulse fs-4"></i>
+                        <div>
+                            <div class="fw-bold">Assess Symptoms</div>
+                            <small class="text-muted">Check symptoms, duration, and red-flags</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize Dashboard Chart with dynamic numbers
+    const ctx = document.getElementById('activityChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Plant Leaf', 'Staple Crops', 'Skin Lesions', 'Blood Reports', 'Chest X-Ray', 'Symptoms Triage'],
+                datasets: [
+                    {
+                        label: 'Your Recorded Scans',
+                        data: [
+                            {{ counts.plant }},
+                            {{ counts.crop }},
+                            {{ counts.skin }},
+                            {{ counts.blood }},
+                            {{ counts.xray }},
+                            {{ counts.get('symptoms', 0) }}
+                        ],
+                        backgroundColor: [
+                            '#198754',
+                            '#ffc107',
+                            '#0d6efd',
+                            '#dc3545',
+                            '#0dcaf0',
+                            '#6f42c1'
+                        ],
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

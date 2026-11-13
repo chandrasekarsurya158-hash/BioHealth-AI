@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Medicine Information & Precautions - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-4">
+                        <i class="bi bi-capsule fs-2"></i>
+                    </div>
+                    <div>
+                        <span class="badge bg-warning text-dark mb-1">Module 4E: Verified Pharmacopeia</span>
+                        <h3 class="fw-bold mb-0">Medicine Information & Safety Precautions</h3>
+                    </div>
+                </div>
+
+                <p class="text-muted">
+                    Search for commonly prescribed and over-the-counter medications to review verified therapeutic uses, typical side effects, critical warnings, and contraindications.
+                </p>
+
+                <!-- Search Input Bar -->
+                <form method="GET" action="{{ url_for('medical.medicine_info') }}" class="mb-4">
+                    <div class="input-group input-group-lg shadow-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="query" class="form-control border-start-0" placeholder="Search medicine by name (e.g., Paracetamol, Amoxicillin, Metformin, Cetirizine)..." value="{{ query }}">
+                        <button type="submit" class="btn btn-warning px-4 fw-bold">Search</button>
+                    </div>
+                </form>
+
+                <div class="alert alert-light border small text-muted rounded-3 mb-0">
+                    <i class="bi bi-exclamation-octagon text-danger me-1"></i>
+                    <strong>Non-Prescriptive Notice:</strong> This reference is educational only. It does not provide personalized dosages or recommend starting/stopping any drug. Always consult your prescribing physician or pharmacist.
+                </div>
+            </div>
+
+            <!-- Results Count / Query Indicator -->
+            {% if query %}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small">
+                    Showing <strong>{{ total_results }}</strong> result(s) for "<strong>{{ query }}</strong>":
+                </span>
+                <a href="{{ url_for('medical.medicine_info') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i> Clear Search
+                </a>
+            </div>
+            {% else %}
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                <span class="small text-muted me-1">Quick Search Suggestions:</span>
+                <a href="{{ url_for('medical.medicine_info', query='Cetirizine') }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3">Cetirizine (Allergy)</a>
+                <a href="{{ url_for('medical.medicine_info', query='Paracetamol') }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3">Paracetamol (Fever/Pain)</a>
+                <a href="{{ url_for('medical.medicine_info', query='Ibuprofen') }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3">Ibuprofen (NSAID)</a>
+                <a href="{{ url_for('medical.medicine_info', query='Amoxicillin') }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3">Amoxicillin (Antibiotic)</a>
+                <a href="{{ url_for('medical.medicine_info', query='Metformin') }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3">Metformin (Diabetes)</a>
+                <a href="{{ url_for('medical.medicine_info', query='Omeprazole') }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3">Omeprazole (Acidity)</a>
+            </div>
+            {% endif %}
+
+            <!-- Dynamic Medicine Cards Display -->
+            {% if medicines %}
+            <div class="row g-4">
+                {% for med in medicines %}
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h4 class="fw-bold text-dark mb-0">{{ med.name }}</h4>
+                                    <small class="text-secondary fw-semibold">{{ med.generic_name }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge {% if med.prescription_type == 'OTC' %}bg-success-subtle text-success border border-success{% else %}bg-danger-subtle text-danger border border-danger{% endif %} mb-1">
+                                        {{ med.prescription_type }}
+                                    </span>
+                                    <span class="badge bg-light text-dark border d-block" style="font-size: 0.7rem;">{{ med.category }}</span>
+                                </div>
+                            </div>
+
+                            {% if med.brand_examples %}
+                            <div class="mb-2">
+                                <span class="badge bg-light text-muted border">Common Brands: {{ med.brand_examples }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="p-2 bg-light rounded-3 small text-secondary mb-3">
+                                <strong class="text-dark d-block mb-1"><i class="bi bi-check2-circle text-success me-1"></i> Therapeutic Uses:</strong>
+                                {{ med.uses }}
+                            </div>
+
+                            <div class="border-top pt-3 small">
+                                <!-- PRECAUTIONS -->
+                                <div class="mb-2">
+                                    <strong class="text-dark d-block mb-1">
+                                        <i class="bi bi-shield-check text-success me-1"></i> Important Precautions:
+                                    </strong>
+                                    <p class="text-secondary mb-0">{{ med.precautions }}</p>
+                                </div>
+
+                                <!-- WARNINGS -->
+                                {% if med.warnings %}
+                                <div class="p-2 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 mb-2">
+                                    <strong class="text-danger d-block mb-1">
+                                        <i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> Critical Warnings & Alerts:
+                                    </strong>
+                                    <span class="text-dark">{{ med.warnings }}</span>
+                                </div>
+                                {% endif %}
+
+                                <!-- SIDE EFFECTS -->
+                                <div class="mb-2">
+                                    <strong class="text-dark d-block mb-1">
+                                        <i class="bi bi-activity text-warning me-1"></i> Common Side Effects:
+                                    </strong>
+                                    <p class="text-secondary mb-0">{{ med.side_effects }}</p>
+                                </div>
+
+                                <!-- CONTRAINDICATIONS & INTERACTIONS -->
+                                {% if med.contraindications %}
+                                <div class="mb-2">
+                                    <strong class="text-danger d-block mb-1">
+                                        <i class="bi bi-slash-circle text-danger me-1"></i> Contraindications:
+                                    </strong>
+                                    <p class="text-secondary mb-0">{{ med.contraindications }}</p>
+                                </div>
+                                {% endif %}
+
+                                {% if med.interactions %}
+                                <div class="mb-2">
+                                    <strong class="text-primary d-block mb-1">
+                                        <i class="bi bi-arrow-left-right text-primary me-1"></i> Known Drug Interactions:
+                                    </strong>
+                                    <p class="text-secondary mb-0">{{ med.interactions }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Source Citation & Review Date Footer -->
+                        <div class="border-top pt-2 mt-3 d-flex justify-content-between align-items-center text-muted" style="font-size: 0.72rem;">
+                            <span>
+                                <i class="bi bi-journal-check me-1"></i>
+                                {% if med.references %}
+                                    {{ med.references[0].source_name }} ({{ med.references[0].year }})
+                                {% else %}
+                                    WHO / BNF Reference
+                                {% endif %}
+                            </span>
+                            <span>Reviewed: {{ med.last_reviewed_date }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- No Results Found State -->
+            <div class="card border-0 bg-white rounded-4 p-5 text-center shadow-sm">
+                <i class="bi bi-search display-4 text-muted mb-3"></i>
+                <h4 class="fw-bold">No Medicine Found for "{{ query }}"</h4>
+                <p class="text-muted small mb-4">
+                    Try searching by another generic name or category, or choose one of the verified medications below:
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <a href="{{ url_for('medical.medicine_info', query='Cetirizine') }}" class="btn btn-outline-warning btn-sm">Cetirizine</a>
+                    <a href="{{ url_for('medical.medicine_info', query='Paracetamol') }}" class="btn btn-outline-warning btn-sm">Paracetamol</a>
+                    <a href="{{ url_for('medical.medicine_info', query='Ibuprofen') }}" class="btn btn-outline-warning btn-sm">Ibuprofen</a>
+                    <a href="{{ url_for('medical.medicine_info', query='Amoxicillin') }}" class="btn btn-outline-warning btn-sm">Amoxicillin</a>
+                    <a href="{{ url_for('medical.medicine_info', query='Metformin') }}" class="btn btn-outline-warning btn-sm">Metformin</a>
+                    <a href="{{ url_for('medical.medicine_info', query='Omeprazole') }}" class="btn btn-outline-warning btn-sm">Omeprazole</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

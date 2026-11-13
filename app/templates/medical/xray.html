@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Chest X-Ray Analysis - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-info bg-opacity-10 text-info p-3 rounded-4">
+                            <i class="bi bi-image fs-2"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-info text-dark mb-1">Module 4C: Thoracic Radiography</span>
+                            <h3 class="fw-bold mb-0">Chest X-Ray Research Analysis</h3>
+                        </div>
+                    </div>
+                    {% if model_ready %}
+                        <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill mt-2 mt-md-0">
+                            <i class="bi bi-check-circle-fill me-1"></i> Radiography Model Active
+                        </span>
+                    {% else %}
+                        <span class="badge bg-warning-subtle text-dark border border-warning px-3 py-2 rounded-pill mt-2 mt-md-0">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> Model Not Trained Yet
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="alert alert-warning border-warning rounded-3 small mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    <strong>Critical Medical Notice:</strong> Computer vision outputs are experimental research prototypes and must never be interpreted as an official radiology report or diagnostic conclusion. Formal radiological review by a licensed radiologist is mandatory.
+                </div>
+
+                {% if not model_ready %}
+                    <div class="alert alert-warning border-warning rounded-3 d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <i class="bi bi-info-circle-fill text-warning me-2 fs-5"></i>
+                            <strong>X-Ray model weights file not found on disk.</strong>
+                            <div class="small text-muted mt-1">Run <code>py train_xray_model.py</code> in your VS Code terminal to train and save the model weights.</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('medical.xray_analysis') }}" enctype="multipart/form-data" class="needs-loading">
+                    <!-- Dropzone -->
+                    <div class="upload-zone p-5 text-center rounded-4 border-2 border-dashed mb-4" id="uploadZone">
+                        <input type="file" name="xray_image" id="fileInput" class="d-none" accept=".jpg,.jpeg,.png" required>
+                        <div id="uploadPrompt">
+                            <i class="bi bi-file-medical-fill text-info display-4 mb-2"></i>
+                            <h5 class="fw-bold">Upload frontal chest X-ray radiograph (PA / AP)</h5>
+                            <p class="text-muted small mb-3">Accepts standard medical image scans (Max: 16 MB)</p>
+                            <button type="button" class="btn btn-outline-info text-dark px-4" onclick="document.getElementById('fileInput').click()">
+                                <i class="bi bi-folder2-open me-1"></i> Browse Radiograph
+                            </button>
+                        </div>
+                        <div id="imagePreviewContainer" class="d-none mt-3">
+                            <img id="imagePreview" src="#" alt="X-Ray Preview" class="img-fluid rounded-3 shadow-sm mb-3" style="max-height: 280px; filter: grayscale(100%);">
+                            <div class="d-flex justify-content-center gap-2">
+                                <span class="badge bg-light text-dark border p-2" id="fileNameDisplay">xray.jpg</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="removeFileBtn">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light border-0 p-3 rounded-3 mb-4">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-shield-check me-1 text-info"></i> Research Target Conditions:</h6>
+                        <p class="small text-muted mb-0">
+                            Classifies pulmonary patterns including Normal Thoracic Cavity, Bacterial Pneumonia, Viral Pneumonia, and Opacity indicators with class probabilities and model confidence.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn btn-info text-dark btn-lg w-100 py-3 fw-bold rounded-3 shadow-sm">
+                        <i class="bi bi-activity me-2"></i> Analyze Radiographic Features
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

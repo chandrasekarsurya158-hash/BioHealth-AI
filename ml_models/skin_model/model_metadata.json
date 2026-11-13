@@ -1,0 +1,31 @@
+{
+    "model_name": "EfficientNet-B0-HAM10000-DermClassifier",
+    "version": "1.0.0",
+    "domain": "Cutaneous Dermatological Screening (HAM10000)",
+    "architecture": "EfficientNet-B0-MBConv-Dense-Softmax",
+    "input_resolution": [
+        224,
+        224,
+        3
+    ],
+    "num_classes": 7,
+    "classes": [
+        "nv",
+        "mel",
+        "bkl",
+        "bcc",
+        "akiec",
+        "vasc",
+        "df"
+    ],
+    "trained_on": "HAM10000 Dermatoscopic Research Benchmark Dataset",
+    "disclaimer": "Experimental screening prototype. Non-diagnostic.",
+    "created_at": "2026-11-12 11:43:29",
+    "metrics": {
+        "validation_accuracy": "88.5%",
+        "categorical_loss": 0.214,
+        "precision": "88.2%",
+        "recall": "87.9%",
+        "f1_score": "88.0%"
+    }
+}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}System Audit Logs - BioHealth AI Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none small text-muted">&larr; Back to Admin Dashboard</a>
+            </div>
+            <h2 class="fw-bold mb-0">System Security & Activity Audit Trail</h2>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <span class="badge bg-secondary fs-6 px-3 py-2 align-self-center">
+                Events Recorded: {{ logs|length }}
+            </span>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="table-light">
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Timestamp</th>
+                        <th>Administrator</th>
+                        <th>Action Performed</th>
+                        <th>Target Domain</th>
+                        <th>Event Description</th>
+                        <th>Origin IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if logs %}
+                        {% for log in logs %}
+                        <tr>
+                            <td class="text-muted fw-bold">#{{ log.id }}</td>
+                            <td class="text-muted">{{ log.created_at }}</td>
+                            <td class="fw-bold text-dark">{{ log.admin_name }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ log.action }}</span></td>
+                            <td><code>{{ log.target_module }}</code></td>
+                            <td>{{ log.details }}</td>
+                            <td class="text-muted"><code>{{ log.ip_address or '127.0.0.1' }}</code></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No security or system events recorded yet.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

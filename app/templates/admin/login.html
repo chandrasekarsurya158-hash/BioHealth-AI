@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Portal - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5 bg-dark text-white border border-secondary">
+                <div class="text-center mb-4">
+                    <div class="brand-icon mx-auto mb-2 text-warning fs-1">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <h3 class="fw-bold">Admin Portal</h3>
+                    <p class="text-secondary small">Restricted access for system administrators & researchers</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('admin.login') }}" autocomplete="off">
+                    <div class="mb-3">
+                        <label for="admin_key" class="form-label fw-semibold small text-light">Admin Username / Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black text-secondary border-secondary"><i class="bi bi-key-fill"></i></span>
+                            <input type="text" class="form-control bg-black text-white border-secondary" id="admin_key" name="admin_key" placeholder="Enter admin username or email" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold small text-light">Security Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black text-secondary border-secondary"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" class="form-control bg-black text-white border-secondary" id="password" name="password" placeholder="Enter password" required autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark rounded-3 shadow-sm mb-3">
+                        <i class="bi bi-shield-check me-1"></i> Authenticate Administrator
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('auth.login') }}" class="small text-secondary text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Return to User Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

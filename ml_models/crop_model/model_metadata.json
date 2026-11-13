@@ -1,0 +1,35 @@
+{
+    "model_name": "ResNet50-StapleCrops-Classifier",
+    "version": "1.0.0",
+    "domain": "Staple Cereal Agriculture (Rice, Wheat, Maize)",
+    "architecture": "ResNet50-ResidualBottleneck-Softmax",
+    "input_resolution": [
+        224,
+        224,
+        3
+    ],
+    "num_classes": 12,
+    "classes": [
+        "Rice_Bacterial_leaf_blight",
+        "Rice_Brown_spot",
+        "Rice_Leaf_blast",
+        "Rice_healthy",
+        "Wheat_Brown_rust",
+        "Wheat_Yellow_rust",
+        "Wheat_Septoria",
+        "Wheat_healthy",
+        "Maize_Cercospora_leaf_spot",
+        "Maize_Common_rust",
+        "Maize_Northern_Leaf_Blight",
+        "Maize_healthy"
+    ],
+    "trained_on": "Agricultural Benchmark Cereal Disease Datasets",
+    "created_at": "2026-11-12 11:35:27",
+    "metrics": {
+        "validation_accuracy": "95.2%",
+        "categorical_loss": 0.142,
+        "precision": "95.0%",
+        "recall": "94.8%",
+        "f1_score": "94.9%"
+    }
+}

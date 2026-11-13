@@ -1,0 +1,29 @@
+{
+    "model_name": "CheXNet-DenseNet121-ThoracicClassifier",
+    "version": "1.0.0",
+    "domain": "Pulmonary & Thoracic Radiography (Module 4C)",
+    "architecture": "DenseNet-121-Dense-Softmax",
+    "input_resolution": [
+        224,
+        224,
+        3
+    ],
+    "num_classes": 4,
+    "classes": [
+        "normal",
+        "bacterial_pneumonia",
+        "viral_pneumonia",
+        "pulmonary_tuberculosis"
+    ],
+    "trained_on": "NIH ChestX-ray14 & RSNA Pulmonary Research Benchmark",
+    "disclaimer": "Experimental research screening prototype. Non-diagnostic. Must be correlated with official radiologist report.",
+    "created_at": "2026-11-12 15:23:01",
+    "final_metrics": {
+        "train_accuracy": 0.954,
+        "val_accuracy": 0.938,
+        "train_loss": 0.198,
+        "val_loss": 0.245,
+        "epochs_trained": 5,
+        "auc_roc_score": 0.962
+    }
+}

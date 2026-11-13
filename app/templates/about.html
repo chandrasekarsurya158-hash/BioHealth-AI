@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}About Project - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill align-self-start mb-3">
+                    <i class="bi bi-info-circle me-1"></i> Academic & Research Documentation
+                </span>
+                <h1 class="fw-bold mb-3">Multi-Domain AI Disease Detection & Intelligent Health Assistance</h1>
+                <p class="lead text-muted mb-4">
+                    A unified, full-stack platform integrating specialized Artificial Intelligence architectures for plant pathology, staple crop protection, dermatological screening, and medical health assistance.
+                </p>
+
+                <hr class="my-4">
+
+                <h4 class="fw-bold mb-3"><i class="bi bi-bullseye text-success me-2"></i> Project Objectives</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h6 class="fw-bold text-success mb-2">1. Agricultural Security</h6>
+                            <p class="small text-muted mb-0">
+                                Provide rapid identification of plant and crop leaf diseases (focusing on Rice, Wheat, and Maize) to prevent crop yield losses and recommend sustainable prevention practices.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h6 class="fw-bold text-primary mb-2">2. Clinical Health Assistance</h6>
+                            <p class="small text-muted mb-0">
+                                Provide early non-diagnostic health screening via skin lesions, chest X-rays, structured symptom triage, automated blood test report parsing, and verified medicine references.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold mb-3"><i class="bi bi-diagram-3 text-primary me-2"></i> Modular Architecture Overview</h4>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Module</th>
+                                <th>Domain</th>
+                                <th>AI / Technical Methodology</th>
+                                <th>Primary Output</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold">Module 1: Plant Disease</td>
+                                <td>Agriculture</td>
+                                <td>Convolutional Neural Networks / Transfer Learning</td>
+                                <td>Disease class, confidence, prevention methods</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Module 2: Crop Disease</td>
+                                <td>Agriculture</td>
+                                <td>Dedicated Staple Crop Classifier (Rice, Wheat, Maize)</td>
+                                <td>Pathogen symptoms, treatment guidance</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Module 3: Skin Screening</td>
+                                <td>Healthcare</td>
+                                <td>Dermatology Research Classifier</td>
+                                <td>Visible pattern categorization + physician advisory</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Module 4A: Symptoms Assessment</td>
+                                <td>Healthcare</td>
+                                <td>Structured Rule-Engine & Urgency Triage</td>
+                                <td>Severity rating, emergency red-flags</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Module 4B: Blood Report</td>
+                                <td>Healthcare</td>
+                                <td>PyMuPDF Text Extraction + Regular Expressions</td>
+                                <td>Biomarker reference ranges (Hemoglobin, Glucose, etc.)</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Module 4C: Chest X-Ray</td>
+                                <td>Healthcare</td>
+                                <td>Deep Learning Radiography Classifier</td>
+                                <td>Thoracic pattern analysis + radiologist disclaimer</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Module 4E: Medicine Info</td>
+                                <td>Healthcare</td>
+                                <td>Verified Pharmaceutical Knowledge Base</td>
+                                <td>Uses, contraindications, side effects</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-warning border-warning rounded-3 d-flex align-items-start gap-3">
+                    <i class="bi bi-shield-exclamation fs-3 text-warning"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Ethical AI & Clinical Disclaimer</h6>
+                        <p class="small mb-0">
+                            This software is built for educational, research, and non-critical preliminary screening purposes. It is strictly engineered to avoid claiming confirmed diagnostic capability. All medical assessments mandate formal review by certified clinicians, and agricultural recommendations must be cross-checked with certified agronomists.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

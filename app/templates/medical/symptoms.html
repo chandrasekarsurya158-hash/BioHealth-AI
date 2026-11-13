@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Symptoms Health Assessment - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                
+                <!-- Module Header -->
+                <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-4">
+                        <i class="bi bi-clipboard2-pulse fs-2"></i>
+                    </div>
+                    <div>
+                        <span class="badge bg-danger mb-1">Module 4A: Upgraded Clinical Assessment & Triage</span>
+                        <h3 class="fw-bold mb-0">Symptoms-Based Health Assessment</h3>
+                        <small class="text-muted">Evidence-based triage, emergency red flag screening, and personalized safety guidance</small>
+                    </div>
+                </div>
+
+                <!-- Emergency Banner -->
+                <div class="alert alert-danger border-danger rounded-4 p-3 mb-4 d-flex align-items-start gap-3 shadow-sm">
+                    <i class="bi bi-exclamation-octagon-fill fs-2 text-danger flex-shrink-0 mt-1"></i>
+                    <div>
+                        <strong class="d-block text-danger fs-6">Critical Medical Emergency Notice:</strong>
+                        <p class="small mb-0 text-dark">
+                            If you or the person you are assessing is experiencing crushing chest pain, severe shortness of breath, sudden confusion, loss of consciousness, uncontrolled bleeding, or convulsions, <strong>CALL EMERGENCY SERVICES (112 / 911 / 999) IMMEDIATELY</strong>. Do not delay emergency care to use this tool.
+                        </p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('medical.symptoms_assessment') }}" class="needs-loading" id="symptomsForm">
+                    
+                    <!-- SECTION 1: Patient Profile & Vital Signs -->
+                    <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-person-badge text-primary fs-5"></i> 1. Patient Profile & Vital Signs
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-dark small"><i class="bi bi-person me-1 text-primary"></i> Patient Age (Years)</label>
+                                <input type="number" name="age" id="ageInput" class="form-control form-control-lg bg-white shadow-sm" placeholder="Enter age (e.g. 25)" min="1" max="120" required>
+                                <small class="text-muted" style="font-size: 0.75rem;">Type age number directly</small>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-dark small"><i class="bi bi-thermometer-half me-1 text-danger"></i> Body Temperature</label>
+                                <input type="number" step="any" name="temperature" id="tempInput" class="form-control form-control-lg bg-white shadow-sm" placeholder="Enter number (e.g. 98.6 or 108)">
+                                <small class="text-muted" style="font-size: 0.75rem;">Type thermometer number directly</small>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-dark small"><i class="bi bi-gear me-1 text-secondary"></i> Temperature Unit</label>
+                                <select name="temp_unit" id="tempUnitSelect" class="form-select form-select-lg bg-white shadow-sm">
+                                    <option value="F" selected>Fahrenheit (°F)</option>
+                                    <option value="C">Celsius (°C)</option>
+                                </select>
+                                <small class="text-muted" style="font-size: 0.75rem;">Select unit (°F or °C)</small>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Temperature Warning Box (Appears via JS if extreme) -->
+                        <div id="tempAlertBox" class="alert alert-danger mt-3 d-none mb-0 small rounded-3">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                            <span id="tempAlertText"></span>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: Observed Symptoms Selection -->
+                    <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                <i class="bi bi-check2-square text-danger fs-5"></i> 2. Select All Current Symptoms
+                            </h5>
+                            <span class="badge bg-white text-muted border">Select all that apply</span>
+                        </div>
+
+                        <div class="row g-3">
+                            {% for sym_key, sym_info in symptoms_dict.items() %}
+                            <div class="col-md-4 col-sm-6">
+                                <div class="p-3 border rounded-3 bg-white h-100 symptom-box {% if sym_info.is_emergency %}border-danger border-opacity-50{% endif %}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="symptoms" value="{{ sym_key }}" id="sym_{{ sym_key }}">
+                                        <label class="form-check-label fw-semibold small d-block" for="sym_{{ sym_key }}">
+                                            <i class="bi {{ sym_info.icon }} me-1 {% if sym_info.is_emergency %}text-danger{% elif sym_info.category == 'Respiratory' %}text-info{% else %}text-primary{% endif %}"></i>
+                                            {{ sym_info.name }}
+                                        </label>
+                                        <div class="d-flex justify-content-between align-items-center mt-1">
+                                            <small class="text-muted" style="font-size: 0.72rem;">{{ sym_info.category }}</small>
+                                            {% if sym_info.is_emergency %}
+                                                <span class="badge bg-danger-subtle text-danger" style="font-size: 0.65rem;">Red Flag</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: Duration & Perceived Severity -->
+                    <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-hourglass-split text-warning fs-5"></i> 3. Progression & Severity
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Symptom Duration</label>
+                                <select class="form-select bg-white" name="duration" required>
+                                    <option value="" selected disabled>How long have symptoms persisted?</option>
+                                    <option value="less_24h">Less than 24 hours (Acute onset)</option>
+                                    <option value="1_to_3_days">1 to 3 days (Short-term)</option>
+                                    <option value="4_to_7_days">4 to 7 days (Ongoing / Sub-acute)</option>
+                                    <option value="more_than_week">More than 1 week (Prolonged)</option>
+                                    <option value="chronic">Over 1 month (Chronic condition)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Perceived Severity Level</label>
+                                <select class="form-select bg-white" name="severity" required>
+                                    <option value="" selected disabled>Select intensity of distress</option>
+                                    <option value="mild">Mild (Noticeable discomfort, but daily activities uninterrupted)</option>
+                                    <option value="moderate">Moderate (Interferes with work, study, or sleep)</option>
+                                    <option value="severe">Severe (Incapacitating, severe pain, bedridden)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: Medical Safety Profile (Allergies, Conditions, Pregnancy) -->
+                    <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-2 text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-lock text-success fs-5"></i> 4. Medical Background & Medication Safety
+                        </h5>
+                        <p class="small text-muted mb-3">Used exclusively to screen for medication contraindications and allergy warnings. Protected as confidential medical information.</p>
+
+                        <div class="row g-4">
+                            <!-- Drug Allergies -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-dark">Known Drug Allergies</label>
+                                <div class="p-3 bg-white border rounded-3 d-flex flex-column gap-2">
+                                    {% for a_key, a_name in allergies_dict.items() %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="allergies" value="{{ a_key }}" id="all_{{ a_key }}">
+                                        <label class="form-check-label small" for="all_{{ a_key }}">
+                                            {{ a_name }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Preexisting Chronic Conditions -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-dark">Existing Health Conditions</label>
+                                <div class="p-3 bg-white border rounded-3 d-flex flex-column gap-2">
+                                    {% for c_key, c_name in conditions_dict.items() %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="conditions" value="{{ c_key }}" id="cond_{{ c_key }}">
+                                        <label class="form-check-label small" for="cond_{{ c_key }}">
+                                            {{ c_name }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Current Medicines -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-dark">Current Medications Taken (Optional)</label>
+                                <input type="text" name="current_medicines" class="form-control bg-white" placeholder="e.g. Blood pressure pills, Metformin, Blood thinners...">
+                                <small class="text-muted" style="font-size: 0.75rem;">Checked for potential interactions with OTC symptomatic guidance</small>
+                            </div>
+
+                            <!-- Pregnancy Status -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-dark">Pregnancy / Breastfeeding Status</label>
+                                <select name="pregnancy" class="form-select bg-white">
+                                    <option value="none" selected>Not Pregnant / Not Applicable</option>
+                                    <option value="pregnant">Currently Pregnant</option>
+                                    <option value="breastfeeding">Currently Breastfeeding</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: Additional Context -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark small"><i class="bi bi-pencil-square text-secondary me-1"></i> 5. Additional Clinical Context (Optional)</label>
+                        <textarea class="form-control bg-light" name="notes" rows="2" placeholder="Mention any recent sick contacts, travel history, or specific concerns..."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow">
+                        <i class="bi bi-heart-pulse-fill me-2"></i> Run Evidence-Based Health Assessment & Triage
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Real-time Temperature Emergency Warning Validator
+    const tempInput = document.getElementById('tempInput');
+    const tempUnit = document.getElementById('tempUnitSelect');
+    const alertBox = document.getElementById('tempAlertBox');
+    const alertText = document.getElementById('tempAlertText');
+
+    function checkTemperature() {
+        const val = parseFloat(tempInput.value);
+        if (isNaN(val)) {
+            alertBox.classList.add('d-none');
+            return;
+        }
+
+        const unit = tempUnit.value;
+        let isEmergency = false;
+        let msg = "";
+
+        if (unit === 'F') {
+            if (val >= 108.0) {
+                isEmergency = true;
+                msg = `CRITICAL HYPERPYREXIA (${val}°F): Temperature at or above 108°F is a life-threatening medical emergency. Seek immediate emergency care!`;
+            } else if (val >= 104.0) {
+                isEmergency = true;
+                msg = `HIGH FEVER ALERT (${val}°F): Temperatures at or above 104°F require prompt medical evaluation.`;
+            } else if (val < 85.0 || val > 115.0) {
+                isEmergency = true;
+                msg = `IMPLAUSIBLE TEMPERATURE (${val}°F): Please recheck your thermometer. This reading is outside normal human physiological limits.`;
+            }
+        } else {
+            // Celsius
+            if (val >= 42.2) {
+                isEmergency = true;
+                msg = `CRITICAL HYPERPYREXIA (${val}°C): Temperature at or above 42.2°C is a life-threatening medical emergency. Seek immediate emergency care!`;
+            } else if (val >= 40.0) {
+                isEmergency = true;
+                msg = `HIGH FEVER ALERT (${val}°C): Temperatures at or above 40°C require prompt medical evaluation.`;
+            } else if (val < 30.0 || val > 45.0) {
+                isEmergency = true;
+                msg = `IMPLAUSIBLE TEMPERATURE (${val}°C): Please recheck your thermometer. This reading is outside normal human physiological limits.`;
+            }
+        }
+
+        if (isEmergency) {
+            alertText.textContent = msg;
+            alertBox.classList.remove('d-none');
+        } else {
+            alertBox.classList.add('d-none');
+        }
+    }
+
+    if (tempInput && tempUnit) {
+        tempInput.addEventListener('input', checkTemperature);
+        tempUnit.addEventListener('change', checkTemperature);
+    }
+</script>
+{% endblock %}

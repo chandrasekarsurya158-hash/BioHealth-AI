@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Control Center - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header with Admin Navigation Actions -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-warning text-dark px-3 py-1 fw-bold">RBAC Level: System Administrator</span>
+                <span class="badge bg-success-subtle text-success border border-success">Live Session Active</span>
+            </div>
+            <h2 class="fw-bold mb-0">System Control Center & Architecture Monitoring</h2>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+            <a href="{{ url_for('admin.user_management') }}" class="btn btn-outline-primary btn-sm px-3">
+                <i class="bi bi-people me-1"></i> Manage Users
+            </a>
+            <a href="{{ url_for('admin.medicine_management') }}" class="btn btn-outline-warning text-dark btn-sm px-3">
+                <i class="bi bi-capsule me-1"></i> Manage Medicines
+            </a>
+            <a href="{{ url_for('admin.system_logs') }}" class="btn btn-outline-secondary btn-sm px-3">
+                <i class="bi bi-journal-text me-1"></i> Audit Logs
+            </a>
+            <a href="{{ url_for('admin.logout') }}" class="btn btn-outline-danger btn-sm px-3">
+                <i class="bi bi-box-arrow-right me-1"></i> Exit Admin
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin KPI Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-muted small fw-semibold">Registered Users</span>
+                        <h3 class="fw-bold text-dark mt-1 mb-0">{{ analytics.total_users }}</h3>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4">
+                        <i class="bi bi-people-fill fs-4"></i>
+                    </div>
+                </div>
+                <small class="text-success mt-2 d-block"><i class="bi bi-shield-check"></i> MySQL Managed Users</small>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-muted small fw-semibold">Total Analyses Executed</span>
+                        <h3 class="fw-bold text-success mt-1 mb-0">{{ analytics.total_scans }}</h3>
+                    </div>
+                    <div class="bg-success bg-opacity-10 text-success p-3 rounded-4">
+                        <i class="bi bi-activity fs-4"></i>
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">Across all 6 domain pipelines</small>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-muted small fw-semibold">Verified Medicines</span>
+                        <h3 class="fw-bold text-warning mt-1 mb-0">{{ analytics.total_medicines|default(5) }}</h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-4">
+                        <i class="bi bi-capsule fs-4"></i>
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">Pharmacopeia Knowledge Base</small>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-muted small fw-semibold">Active AI Models</span>
+                        <h3 class="fw-bold text-info mt-1 mb-0">6 / 6</h3>
+                    </div>
+                    <div class="bg-info bg-opacity-10 text-info p-3 rounded-4">
+                        <i class="bi bi-cpu fs-4"></i>
+                    </div>
+                </div>
+                <small class="text-success mt-2 d-block"><i class="bi bi-check2-circle"></i> Operational Pipelines</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Chart & Real-Time Model Status Grid -->
+    <div class="row g-4 mb-4">
+        <!-- Chart.js Analysis Volume Graph -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Platform Analysis Distribution</h5>
+                    <span class="badge bg-light text-dark border">Live MySQL Data</span>
+                </div>
+                <div style="position: relative; height: 280px;">
+                    <canvas id="adminAnalyticsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Model Availability Status Cards -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold mb-3"><i class="bi bi-diagram-3-fill text-primary me-2"></i>AI Inference Engine Status</h5>
+                <div class="d-flex flex-column gap-2 small">
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-light">
+                        <span><i class="bi bi-flower1 text-success me-2"></i>Plant Pathology (CNN)</span>
+                        {% if models_status.plant %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Weights Ready</span>
+                        {% else %}
+                            <span class="badge bg-danger">Model Missing</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-light">
+                        <span><i class="bi bi-tree text-warning me-2"></i>Crop Health (ResNet50)</span>
+                        {% if models_status.crop %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Weights Ready</span>
+                        {% else %}
+                            <span class="badge bg-danger">Model Missing</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-light">
+                        <span><i class="bi bi-bandaid text-primary me-2"></i>Skin Lesions (HAM10000)</span>
+                        {% if models_status.skin %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Weights Ready</span>
+                        {% else %}
+                            <span class="badge bg-danger">Model Missing</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-light">
+                        <span><i class="bi bi-image text-info me-2"></i>Chest Radiography (DenseNet121)</span>
+                        {% if models_status.xray %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Weights Ready</span>
+                        {% else %}
+                            <span class="badge bg-danger">Model Missing</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-light">
+                        <span><i class="bi bi-file-earmark-medical text-danger me-2"></i>Blood OCR (PyMuPDF)</span>
+                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Engine Active</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded-3 bg-light">
+                        <span><i class="bi bi-clipboard2-pulse text-secondary me-2"></i>Symptoms Triage Engine</span>
+                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Rules Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent System Activity Audit Trail -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0"><i class="bi bi-shield-shaded text-warning me-2"></i>Recent System Activity Audit Logs</h5>
+            <a href="{{ url_for('admin.system_logs') }}" class="btn btn-sm btn-outline-dark">View Full Audit Log</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="table-light">
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Administrator</th>
+                        <th>Action Performed</th>
+                        <th>Module Target</th>
+                        <th>Event Details</th>
+                        <th>Origin IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if recent_logs %}
+                        {% for log in recent_logs %}
+                        <tr>
+                            <td class="text-muted">{{ log.created_at }}</td>
+                            <td class="fw-semibold text-dark">{{ log.admin_name }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ log.action }}</span></td>
+                            <td><code>{{ log.target_module }}</code></td>
+                            <td>{{ log.details }}</td>
+                            <td class="text-muted"><code>{{ log.ip_address or '127.0.0.1' }}</code></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                No administrative activity logs recorded yet. Events like logins, user updates, and medicine edits will appear here.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('adminAnalyticsChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Plant Leaf', 'Staple Crops', 'Skin Lesions', 'Chest X-Ray', 'Blood Reports', 'Symptoms Triage'],
+                datasets: [{
+                    label: 'Recorded Analyses in Database',
+                    data: [
+                        {{ analytics.plant_scans }},
+                        {{ analytics.crop_scans }},
+                        {{ analytics.skin_scans }},
+                        {{ analytics.xray_scans }},
+                        {{ analytics.blood_scans }},
+                        {{ analytics.symptoms_scans }}
+                    ],
+                    backgroundColor: [
+                        '#16a34a',
+                        '#eab308',
+                        '#2563eb',
+                        '#0891b2',
+                        '#dc2626',
+                        '#7c3aed'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

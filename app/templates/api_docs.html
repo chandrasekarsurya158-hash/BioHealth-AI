@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Developer REST API Reference - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4">
+                        <i class="bi bi-code-slash fs-2"></i>
+                    </div>
+                    <div>
+                        <span class="badge bg-primary mb-1">Developer Ecosystem & IoT Gateway</span>
+                        <h2 class="fw-bold mb-0">REST API v1 Reference & Endpoints</h2>
+                    </div>
+                </div>
+                <p class="text-muted mb-3">
+                    Integrate BioHealth AI's multi-domain computer vision and clinical triage engines into your mobile applications, IoT agricultural drones, and hospital management software.
+                </p>
+                <div class="p-3 bg-light rounded-3 border d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <small class="text-muted d-block fw-semibold">Base API Endpoint:</small>
+                        <code class="fs-6 text-primary">http://127.0.0.1:5000/api/v1</code>
+                    </div>
+                    <a href="{{ url_for('api.api_health') }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Probe Health API
+                    </a>
+                </div>
+            </div>
+
+            <!-- API Endpoints Accordion -->
+            <div class="accordion mb-4 shadow-sm rounded-4 overflow-hidden" id="apiAccordion">
+                
+                <!-- 1. System Health API -->
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            <span class="badge bg-success me-2">GET</span>
+                            <code class="fw-bold text-dark me-3">/api/v1/health</code>
+                            <span class="text-muted small d-none d-md-inline">System & Model Status Health Check</span>
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body p-4 bg-light">
+                            <h6 class="fw-bold">Example cURL Request:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small"><code>curl http://127.0.0.1:5000/api/v1/health</code></pre>
+                            
+                            <h6 class="fw-bold mt-3">Expected Response (HTTP 200 OK):</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>{
+  "active_models": {
+    "blood_ocr": true,
+    "crop_screening": true,
+    "plant_pathology": true,
+    "skin_screening": true,
+    "symptoms_triage": true,
+    "xray_analysis": true
+  },
+  "api_version": "1.0.0",
+  "status": "healthy"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Symptoms Triage API -->
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <span class="badge bg-primary me-2">POST</span>
+                            <code class="fw-bold text-dark me-3">/api/v1/triage/symptoms</code>
+                            <span class="text-muted small d-none d-md-inline">Clinical Symptoms Assessment & Triage</span>
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body p-4 bg-light">
+                            <h6 class="fw-bold">JSON Payload Body:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small"><code>{
+  "symptoms": ["fever", "cough", "headache"],
+  "temperature": 101.5,
+  "temperature_unit": "F",
+  "age": 28,
+  "duration": "days",
+  "severity": "moderate",
+  "allergies": ["penicillin"]
+}</code></pre>
+
+                            <h6 class="fw-bold mt-3">Example cURL:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small"><code>curl -X POST http://127.0.0.1:5000/api/v1/triage/symptoms \
+  -H "Content-Type: application/json" \
+  -d '{"symptoms": ["fever", "cough"], "temperature": 101.5, "age": 30}'</code></pre>
+
+                            <h6 class="fw-bold mt-3">Response Structure:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>{
+  "module": "symptoms_triage",
+  "status": "success",
+  "triage_result": {
+    "is_emergency": false,
+    "primary_syndrome": "Upper Respiratory Tract Infection",
+    "urgency_level": "MODERATE",
+    "red_flags": []
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Plant Leaf Pathology API -->
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="badge bg-primary me-2">POST</span>
+                            <code class="fw-bold text-dark me-3">/api/v1/predict/plant</code>
+                            <span class="text-muted small d-none d-md-inline">Plant Leaf Computer Vision Inference</span>
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body p-4 bg-light">
+                            <p class="small text-muted mb-2">Upload plant leaf photograph via <code>multipart/form-data</code> with field name <code>image</code>.</p>
+                            <h6 class="fw-bold">Example cURL:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>curl -X POST http://127.0.0.1:5000/api/v1/predict/plant \
+  -F "image=@leaf_sample.jpg"</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Chest X-Ray Screening API -->
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            <span class="badge bg-primary me-2">POST</span>
+                            <code class="fw-bold text-dark me-3">/api/v1/predict/xray</code>
+                            <span class="text-muted small d-none d-md-inline">Thoracic Radiography Inference</span>
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body p-4 bg-light">
+                            <p class="small text-muted mb-2">Upload frontal chest radiograph (PA/AP) with field name <code>image</code>.</p>
+                            <h6 class="fw-bold">Example cURL:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>curl -X POST http://127.0.0.1:5000/api/v1/predict/xray \
+  -F "image=@chest_xray.png"</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Medicine Information API -->
+                <div class="accordion-item border-0">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            <span class="badge bg-success me-2">GET</span>
+                            <code class="fw-bold text-dark me-3">/api/v1/medicines?query=...</code>
+                            <span class="text-muted small d-none d-md-inline">Verified Pharmacopeia Knowledge Search</span>
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body p-4 bg-light">
+                            <h6 class="fw-bold">Example Request:</h6>
+                            <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>curl "http://127.0.0.1:5000/api/v1/medicines?query=paracetamol"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Python SDK Quickstart Example -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-terminal text-success me-2"></i>Python Client Example</h4>
+                <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>import requests
+
+BASE_URL = "http://127.0.0.1:5000/api/v1"
+
+# 1. Triage Symptoms via API
+triage_payload = {
+    "symptoms": ["fever", "cough", "shortness_of_breath"],
+    "temperature": 102.5,
+    "age": 35
+}
+res = requests.post(f"{BASE_URL}/triage/symptoms", json=triage_payload)
+print("Triage Response:", res.json())
+
+# 2. Query Drug Precautions
+med_res = requests.get(f"{BASE_URL}/medicines", params={"query": "cetirizine"})
+print("Pharmacopeia:", med_res.json())</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

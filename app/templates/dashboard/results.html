@@ -1,0 +1,760 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment Results - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            {% set analysis = analysis or session.get('last_analysis') %}
+            {% if analysis %}
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                
+                <!-- GLOBAL REPORT HEADER -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <div>
+                        {% if analysis.module == 'symptoms' %}
+                            <span class="badge {{ analysis.urgency_badge }} px-3 py-2 text-uppercase mb-2 fs-6">
+                                <i class="bi bi-shield-plus me-1"></i> {{ analysis.urgency_title }}
+                            </span>
+                        {% elif analysis.module == 'skin' %}
+                            <span class="badge {{ analysis.urgency_badge }} px-3 py-2 text-uppercase mb-2">
+                                <i class="bi bi-shield-plus me-1"></i> {{ analysis.urgency }}
+                            </span>
+                        {% elif analysis.is_healthy %}
+                            <span class="badge bg-success px-3 py-2 text-uppercase mb-2">
+                                <i class="bi bi-shield-check me-1"></i> Healthy Foliage
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger px-3 py-2 text-uppercase mb-2">
+                                <i class="bi bi-exclamation-diamond-fill me-1"></i> Pathogen Detected
+                            </span>
+                        {% endif %}
+                        <h2 class="fw-bold mb-0">Health & Diagnostic Assessment Report</h2>
+                    </div>
+                    <div class="text-md-end mt-2 mt-md-0">
+                        <small class="text-muted d-block fw-semibold">Report Reference: #{{ analysis.report_id }}</small>
+                        <small class="text-muted">Domain: {{ analysis.plant }}</small>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- SPECIAL UPGRADED LAYOUT: MODULE 4A (SYMPTOMS ASSESSMENT)       -->
+                <!-- ============================================================== -->
+                {% if analysis.module == 'symptoms' %}
+
+                    <!-- 1. ASSESSMENT SUMMARY & PATIENT PROFILE -->
+                    {% set profile = analysis.get('patient_profile') if analysis.get('patient_profile') is mapping else {} %}
+                    <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-person-lines-fill text-primary"></i> 1. Assessment Summary & Patient Profile
+                            </h5>
+                            <span class="badge {{ analysis.urgency_badge|default('bg-primary text-white') }} px-3 py-2">Triage: {{ analysis.urgency_level|default('EVALUATED') }}</span>
+                        </div>
+                        <div class="row g-3 small">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Patient Age</span>
+                                    <strong class="fs-6 text-dark">{{ profile.get('age', 'Not Specified') }} Years</strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Recorded Temperature</span>
+                                    <strong class="fs-6 {% if 'Invalid' in profile.get('temperature', '') %}text-danger{% else %}text-dark{% endif %}">
+                                        {{ profile.get('temperature', 'Not Recorded') }}
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Duration</span>
+                                    <strong class="fs-6 text-dark">{{ analysis.duration|default('Not Specified') }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Reported Severity</span>
+                                    <strong class="fs-6 text-dark">{{ analysis.severity|default('Moderate') }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Safety Metadata Tags -->
+                        <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top small">
+                            <span class="badge bg-white text-dark border p-2">
+                                <i class="bi bi-shield-exclamation text-danger me-1"></i> Drug Allergies: 
+                                {% if profile.get('allergies') %}
+                                    {{ profile.allergies|join(', ') }}
+                                {% else %}
+                                    None Reported
+                                {% endif %}
+                            </span>
+                            <span class="badge bg-white text-dark border p-2">
+                                <i class="bi bi-heart-pulse text-info me-1"></i> Conditions: 
+                                {% if profile.get('conditions') %}
+                                    {{ profile.conditions|join(', ') }}
+                                {% else %}
+                                    None Reported
+                                {% endif %}
+                            </span>
+                            <span class="badge bg-white text-dark border p-2">
+                                <i class="bi bi-capsule text-warning me-1"></i> Current Meds: {{ profile.get('current_medicines', 'None Reported') }}
+                            </span>
+                            {% if profile.get('pregnancy_status') and profile.pregnancy_status != 'Not Applicable' %}
+                            <span class="badge bg-white text-dark border p-2">
+                                <i class="bi bi-gender-female text-primary me-1"></i> Pregnancy: {{ profile.pregnancy_status }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 2. EMERGENCY WARNING (WHEN APPLICABLE) -->
+                    {% if analysis.is_emergency %}
+                    <div class="alert alert-danger border-danger rounded-4 p-4 mb-4 shadow">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <i class="bi bi-exclamation-octagon-fill display-5 text-danger flex-shrink-0"></i>
+                            <div>
+                                <h4 class="fw-bold text-danger mb-0">CRITICAL EMERGENCY MEDICAL WARNING</h4>
+                                <span class="text-dark small">Immediate emergency paramedic intervention is required</span>
+                            </div>
+                        </div>
+                        <p class="mb-3 text-dark">
+                            <strong>Emergency Instructions:</strong> The symptoms or temperature readings entered indicate a potential life-threatening medical emergency. Ordinary self-care or tablet recommendations are <strong>completely suspended</strong>.
+                        </p>
+                        <div class="bg-white p-3 rounded-3 border border-danger mb-3">
+                            {% for rf in analysis.red_flags %}
+                            <div class="mb-2 pb-2 {% if not loop.last %}border-bottom{% endif %}">
+                                <strong class="text-danger d-block"><i class="bi bi-arrow-right-circle-fill me-1"></i> {{ rf.title }}:</strong>
+                                <p class="small text-dark mb-1">{{ rf.reason }}</p>
+                                <span class="badge bg-danger text-white"><i class="bi bi-telephone-outbound me-1"></i> Action: {{ rf.action }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between p-2 bg-danger bg-opacity-10 rounded-3">
+                            <span class="fw-bold text-danger"><i class="bi bi-telephone-fill me-1"></i> Emergency Contacts: Dial 112 (India / EU), 911 (USA), 999 (UK)</span>
+                            <span class="badge bg-danger fs-6 px-3 py-2">Call For Help Now</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Clean Non-Emergency Status Badge -->
+                    <div class="alert alert-success bg-success bg-opacity-10 border-success rounded-3 p-3 mb-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>No Acute Emergency Red Flags Triggered:</strong> Reported symptoms appear appropriate for outpatient / clinic guidance.
+                        </div>
+                        <span class="badge bg-success">Non-Emergency Triage</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- 3. POSSIBLE HEALTH EXPLANATIONS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-lightbulb text-warning"></i> 3. Possible Health Explanations
+                            </h5>
+                            <span class="badge bg-white text-muted border">Differential Analysis</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            The following possibilities are generated from a reviewed clinical knowledge base based on symptom correlations. These are <strong>not confirmed diagnoses</strong> and cannot replace laboratory tests or physician consultation.
+                        </p>
+
+                        <!-- Primary Explanation Box -->
+                        <div class="p-3 bg-white rounded-3 border mb-3">
+                            <span class="badge bg-primary-subtle text-primary mb-1">Primary Possible Match</span>
+                            <h4 class="fw-bold text-dark mb-1">{{ analysis.title }}</h4>
+                            <p class="text-secondary small fst-italic mb-2"><strong>Why this may be relevant:</strong> {{ analysis.matching_rationale }}</p>
+                            <p class="small text-muted mb-0">{{ analysis.explanation }}</p>
+                        </div>
+
+                        <!-- Differential Considerations -->
+                        <div class="p-3 bg-white rounded-3 border">
+                            <strong class="d-block text-dark small mb-2"><i class="bi bi-diagram-3 me-1 text-primary"></i> Other Differential Considerations:</strong>
+                            <ul class="mb-0 small text-muted ps-3">
+                                {% for diff in analysis.differentials %}
+                                <li class="mb-1">{{ diff }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 4. EVALUATED SYMPTOMS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle text-primary"></i> 4. Evaluated Symptoms
+                        </h5>
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            {% for sym in analysis.selected_symptoms %}
+                            <span class="badge bg-white text-dark border px-3 py-2 rounded-pill fs-7">
+                                <i class="bi bi-dot text-danger fs-5 align-middle"></i> {{ sym }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% if analysis.notes %}
+                        <div class="p-2 bg-white rounded border small text-secondary mt-2">
+                            <strong>Additional Patient Notes:</strong> {{ analysis.notes }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 5. RECOMMENDED NEXT STEPS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-list-check text-success"></i> 5. Recommended Next Steps
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-white rounded-3 border h-100">
+                                    <h6 class="fw-bold text-success mb-2"><i class="bi bi-cup-hot me-1"></i> Hydration & Rest Protocol</h6>
+                                    <p class="small text-muted mb-0">{{ analysis.guidance }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-white rounded-3 border h-100">
+                                    <h6 class="fw-bold text-primary mb-2"><i class="bi bi-activity me-1"></i> Monitoring & Red-Flag Precautions</h6>
+                                    <p class="small text-muted mb-0">
+                                        Monitor body temperature twice daily. Keep track of fluid intake and urine output. If symptoms progress or new red flags develop (such as shortness of breath, confusion, or stiff neck), seek urgent hospital evaluation immediately.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. MEDICINE INFORMATION AND PRECAUTIONS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-capsule text-danger"></i> 6. Medicine Information and Precautions
+                            </h5>
+                            <span class="badge bg-danger-subtle text-danger border border-danger">Educational Only &bull; Not a Prescription</span>
+                        </div>
+                        <p class="small text-muted mb-3">
+                            Educational profile of commonly utilized symptomatic relief options. <strong>Personalized dosages are not generated. Antibiotics are completely ineffective against viral respiratory infections.</strong> Always consult a doctor or pharmacist before taking medications.
+                        </p>
+
+                        {% if analysis.is_emergency %}
+                        <div class="alert alert-danger d-flex align-items-center gap-2 mb-3 p-3 rounded-3 small">
+                            <i class="bi bi-exclamation-triangle-fill fs-5 text-danger flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-danger d-block">EMERGENCY CLINICAL NOTICE:</strong>
+                                Because acute emergency warning flags are active, the medicines below are provided for <strong>educational reference only</strong>. Do NOT delay emergency medical care (112 / 911) or hospital evaluation to take home tablets.
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if analysis.medicine_cards %}
+                            <div class="d-flex flex-column gap-3">
+                                {% for med in analysis.medicine_cards %}
+                                <div class="p-3 bg-white rounded-3 border {% if med.is_contraindicated %}border-danger shadow-sm{% endif %}">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0">{{ med.generic_name }}</h6>
+                                            <small class="text-muted">Common Brands: {{ med.brand_examples }}</small>
+                                        </div>
+                                        <span class="badge bg-light text-dark border">General Purpose: {{ med.purpose }}</span>
+                                    </div>
+
+                                    <!-- Safety & Contraindication Alerts for this Patient -->
+                                    {% if med.safety_alerts %}
+                                    <div class="alert alert-danger p-2 mb-2 rounded-2 small">
+                                        {% for sa in med.safety_alerts %}
+                                        <div class="fw-bold text-danger"><i class="bi bi-shield-x me-1"></i> {{ sa }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="row g-2 small text-secondary mt-1">
+                                        <div class="col-md-6">
+                                            <strong><i class="bi bi-check2 text-success me-1"></i> Symptoms Relieved:</strong>
+                                            <p class="mb-1">{{ med.symptoms_relieved }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong><i class="bi bi-exclamation-triangle text-warning me-1"></i> Common Side Effects:</strong>
+                                            <p class="mb-1">{{ med.side_effects }}</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <strong class="text-danger"><i class="bi bi-cone-striped me-1"></i> Important Precautions:</strong>
+                                            <p class="mb-1">{{ med.precautions }}</p>
+                                        </div>
+                                        {% if med.duplicate_warning %}
+                                        <div class="col-12">
+                                            <div class="p-2 bg-warning bg-opacity-10 border border-warning rounded small text-dark">
+                                                <strong>Duplicate Active Ingredient Warning:</strong> {{ med.duplicate_warning }}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center text-muted" style="font-size: 0.75rem;">
+                                        <span>Sources: {{ med.sources }}</span>
+                                        <span>Reviewed: {{ med.reviewed_date }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="p-3 bg-white rounded-3 border text-center text-muted small">
+                                <i class="bi bi-info-circle me-1"></i> No standard over-the-counter medicine cards indicated for this assessment. Focus on medical evaluation and non-pharmacological care.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 7. WHEN TO SEEK MEDICAL CARE -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-danger mb-2 d-flex align-items-center gap-2">
+                            <i class="bi bi-hospital text-danger"></i> 7. When to Seek Medical Care
+                        </h5>
+                        <div class="p-3 bg-white rounded-3 border">
+                            <p class="small text-dark mb-0">{{ analysis.when_to_seek_care }}</p>
+                        </div>
+                    </div>
+
+                    <!-- 8. MEDICAL DISCLAIMER -->
+                    <div class="alert alert-warning border-warning rounded-4 p-3 mb-4 small">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-shield-exclamation text-warning fs-5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="d-block text-dark">8. Ethical & Clinical Medical Disclaimer:</strong>
+                                <p class="mb-0 text-muted">
+                                    BioHealth AI provides automated educational health assessments and preliminary emergency triage based on mathematical pattern correlation. <strong>This report does not provide a confirmed clinical diagnosis or medical prescription, nor does it substitute for the diagnostic expertise of a licensed physician.</strong> If your symptoms worsen, fail to improve, or cause distress, consult a certified healthcare professional or contact emergency medical services without delay.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 9. DOWNLOADABLE / PRINTABLE ASSESSMENT REPORT -->
+                    <div class="d-flex flex-wrap gap-2 justify-content-between pt-3 border-top">
+                        <a href="{{ url_for('medical.symptoms_assessment') }}" class="btn btn-outline-danger">
+                            <i class="bi bi-arrow-left me-1"></i> Perform New Assessment
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('dashboard.history') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-clock-history me-1"></i> View History
+                            </a>
+                            <button class="btn btn-success px-4" onclick="window.print()">
+                                <i class="bi bi-printer me-1"></i> Download / Print Assessment Report
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- ============================================================== -->
+                <!-- SPECIAL UPGRADED LAYOUT: MODULE 4B (BLOOD REPORT ANALYSIS)     -->
+                <!-- ============================================================== -->
+                {% elif analysis.module == 'blood' %}
+
+                    <!-- 1. LABORATORY DIAGNOSTIC SUMMARY -->
+                    <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-file-earmark-medical text-danger"></i> 1. Laboratory Diagnostic Overview
+                            </h5>
+                            <span class="badge {{ analysis.overall_badge|default('bg-primary text-white') }} px-3 py-2 fs-7">
+                                {{ analysis.overall_status }}
+                            </span>
+                        </div>
+                        <div class="row g-3 small">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Biomarkers Evaluated</span>
+                                    <strong class="fs-5 text-dark">{{ analysis.total_extracted }} Parameters</strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Normal Physiological</span>
+                                    <strong class="fs-5 text-success">{{ analysis.normal_count }} Normal</strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Out-of-Range Markers</span>
+                                    <strong class="fs-5 {% if analysis.abnormal_count > 0 %}text-danger{% else %}text-muted{% endif %}">
+                                        {{ analysis.abnormal_count }} Flagged
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-white rounded-3 border">
+                                    <span class="text-muted d-block">Triage Status</span>
+                                    <strong class="fs-6 text-dark">{{ analysis.urgency }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Statement -->
+                        <div class="p-3 bg-white rounded-3 border mt-3">
+                            <strong class="d-block text-dark small mb-1"><i class="bi bi-chat-left-heart text-danger me-1"></i> Clinical Evaluation Statement:</strong>
+                            <p class="small text-muted mb-0">{{ analysis.summary_statement }}</p>
+                        </div>
+                    </div>
+
+                    <!-- 2. BIOMARKERS FINDINGS TABLE -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-table text-primary"></i> 2. Extracted Biomarkers & Reference Range Correlation
+                        </h5>
+
+                        {% if analysis.biomarkers %}
+                        <div class="table-responsive bg-white rounded-3 border p-2">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light small text-uppercase">
+                                    <tr>
+                                        <th>Test / Biomarker</th>
+                                        <th>Category</th>
+                                        <th>Measured Value</th>
+                                        <th>Reference Range</th>
+                                        <th>Status Flag</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for bio in analysis.biomarkers %}
+                                    <tr>
+                                        <td>
+                                            <strong class="text-dark d-block">{{ bio.name }}</strong>
+                                            <small class="text-muted" style="font-size: 0.72rem;">Snippet: {{ bio.source_snippet }}</small>
+                                        </td>
+                                        <td><span class="badge bg-light text-secondary border">{{ bio.category }}</span></td>
+                                        <td>
+                                            <span class="fs-6 fw-bold {% if bio.status == 'NORMAL' %}text-success{% elif 'CRITICAL' in bio.status %}text-danger{% elif bio.status == 'HIGH' %}text-danger{% else %}text-warning{% endif %}">
+                                                {{ bio.measured_value }} {{ bio.unit }}
+                                            </span>
+                                        </td>
+                                        <td><small class="text-muted">{{ bio.ref_range }}</small></td>
+                                        <td>
+                                            <span class="badge {{ bio.badge_class }} px-2 py-1">
+                                                {{ bio.status.replace('_', ' ') }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="p-4 bg-white rounded-3 border text-center text-muted">
+                            <i class="bi bi-file-earmark-x display-6 d-block mb-2 text-warning"></i>
+                            No routine biomarkers could be extracted automatically from the document format. Please upload a clear digital laboratory PDF report.
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 3. CLINICAL INTERPRETATIONS -->
+                    {% if analysis.biomarkers %}
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-journal-medical text-success"></i> 3. Clinical Interpretation of Identified Parameters
+                        </h5>
+                        <div class="d-flex flex-column gap-3">
+                            {% for bio in analysis.biomarkers %}
+                            <div class="p-3 bg-white rounded-3 border">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <div>
+                                        <strong class="text-dark">{{ bio.name }}</strong>
+                                        <small class="text-muted ms-2">({{ bio.measured_value }} {{ bio.unit }} vs {{ bio.ref_range }})</small>
+                                    </div>
+                                    <span class="badge {{ bio.badge_class }}">{{ bio.status.replace('_', ' ') }}</span>
+                                </div>
+                                <p class="small text-muted mb-0">{{ bio.interpretation }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- 4. RECOMMENDED CLINICAL NEXT STEPS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-list-check text-primary"></i> 4. Recommended Clinical Next Steps
+                        </h5>
+                        <div class="p-3 bg-white rounded-3 border">
+                            <ul class="mb-0 small text-secondary ps-3">
+                                {% for rec in analysis.recommendations %}
+                                <li class="mb-2">{{ rec }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 5. LABORATORY DISCLAIMER -->
+                    <div class="alert alert-warning border-warning rounded-4 p-3 mb-4 small">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-shield-exclamation text-warning fs-5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="d-block text-dark">5. Laboratory Medical Disclaimer:</strong>
+                                <p class="mb-0 text-muted">
+                                    {{ analysis.disclaimer }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. ACTIONS & PRINT -->
+                    <div class="d-flex flex-wrap gap-2 justify-content-between pt-3 border-top">
+                        <a href="{{ url_for('medical.blood_report') }}" class="btn btn-outline-danger">
+                            <i class="bi bi-arrow-left me-1"></i> Upload Another Lab Report
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('dashboard.history') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-clock-history me-1"></i> View History
+                            </a>
+                            <button class="btn btn-danger px-4" onclick="window.print()">
+                                <i class="bi bi-printer me-1"></i> Download / Print Lab Report
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- ============================================================== -->
+                <!-- SPECIAL UPGRADED LAYOUT: MODULE 4C (CHEST X-RAY RADIOGRAPHY)   -->
+                <!-- ============================================================== -->
+                {% elif analysis.module == 'xray' %}
+
+                    <!-- 1. RADIOGRAPH HERO SUMMARY -->
+                    <div class="row g-4 align-items-center mb-4">
+                        <div class="col-md-5 text-center">
+                            <div class="p-2 bg-dark rounded-4 border shadow-sm">
+                                <img src="{{ analysis.image_url }}" alt="Chest Radiograph" class="img-fluid rounded-3 mb-2" style="max-height: 280px; object-fit: contain; filter: grayscale(100%);">
+                                <div class="small text-white-50 fw-semibold">Frontal Thoracic Radiograph (PA / AP)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <span class="badge {{ analysis.urgency_badge|default('bg-secondary text-white') }} px-3 py-2 text-uppercase mb-2">
+                                <i class="bi bi-shield-plus me-1"></i> {{ analysis.urgency }}
+                            </span>
+                            <h3 class="fw-bold {% if analysis.is_healthy %}text-success{% else %}text-danger{% endif %} mb-1">
+                                {{ analysis.title }}
+                            </h3>
+                            <p class="text-secondary small mb-3">
+                                <strong>Category:</strong> {{ analysis.subtitle }} &bull; 
+                                <span class="badge bg-light text-muted border">{{ analysis.model_architecture }}</span>
+                            </p>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small fw-bold mb-1">
+                                    <span>Model Confidence Score</span>
+                                    <span class="{% if analysis.is_healthy %}text-success{% else %}text-danger{% endif %} fs-6">{{ analysis.confidence }}%</span>
+                                </div>
+                                <div class="progress rounded-pill" style="height: 12px;">
+                                    <div class="progress-bar {% if analysis.is_healthy %}bg-success{% else %}bg-danger{% endif %} rounded-pill progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ analysis.confidence }}%;" aria-valuenow="{{ analysis.confidence }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-light rounded-3 border small text-dark">
+                                <strong>Radiologic Impression:</strong> {{ analysis.description }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. TOP DIFFERENTIAL PROBABILITIES -->
+                    {% if analysis.top_predictions %}
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-bar-chart-steps text-info"></i> 2. Differential Probabilities Ranking
+                        </h5>
+                        <div class="d-flex flex-column gap-2">
+                            {% for pred in analysis.top_predictions %}
+                            <div class="p-3 bg-white rounded-3 border d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong class="text-dark">{{ pred.display_name }}</strong>
+                                    <span class="badge {{ pred.urgency_badge }} ms-2" style="font-size: 0.7rem;">{{ pred.urgency }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-3" style="width: 220px;">
+                                    <div class="progress flex-grow-1" style="height: 8px;">
+                                        <div class="progress-bar bg-info" style="width: {{ pred.confidence }}%;"></div>
+                                    </div>
+                                    <span class="fw-bold small text-dark">{{ pred.confidence }}%</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- 3. ANATOMICAL RADIOLOGICAL HALLMARKS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-diagram-3 text-primary"></i> 3. Key Anatomical Radiologic Features
+                        </h5>
+                        <div class="p-3 bg-white rounded-3 border">
+                            <ul class="mb-0 small text-secondary ps-3">
+                                {% for sign in analysis.radiological_signs %}
+                                <li class="mb-2">{{ sign }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 4. RECOMMENDED CLINICAL NEXT STEPS -->
+                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-clipboard-pulse text-success"></i> 4. Recommended Clinical Next Steps
+                        </h5>
+                        <div class="p-3 bg-white rounded-3 border">
+                            <p class="small text-dark mb-2"><strong>Physician Action:</strong> {{ analysis.clinical_recommendation }}</p>
+                            <div class="pt-2 border-top small text-muted">
+                                <strong>Differential Considerations:</strong>
+                                <ul class="mb-0 ps-3 mt-1">
+                                    {% for diff in analysis.differential_diagnoses %}
+                                    <li>{{ diff }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. RADIOLOGIST DISCLAIMER -->
+                    <div class="alert alert-warning border-warning rounded-4 p-3 mb-4 small">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-shield-exclamation text-warning fs-5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="d-block text-dark">5. Ethical Radiologist Medical Disclaimer:</strong>
+                                <p class="mb-0 text-muted">
+                                    {{ analysis.radiologist_disclaimer }} This research prototype does not formulate a medical diagnosis or treatment plan. All computer vision outputs must be correlated with patient clinical status, vital signs (SpO2, heart rate, temperature), and an official interpretation by a certified radiologist or pulmonologist.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. ACTIONS & PRINT -->
+                    <div class="d-flex flex-wrap gap-2 justify-content-between pt-3 border-top">
+                        <a href="{{ url_for('medical.xray_analysis') }}" class="btn btn-outline-info text-dark">
+                            <i class="bi bi-arrow-left me-1"></i> Analyze Another Radiograph
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('dashboard.history') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-clock-history me-1"></i> View History
+                            </a>
+                            <button class="btn btn-info text-dark px-4 fw-semibold" onclick="window.print()">
+                                <i class="bi bi-printer me-1"></i> Download / Print Radiology Report
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- ============================================================== -->
+                <!-- STANDARD IMAGE CLASSIFICATION LAYOUT (PLANT, CROP, SKIN)       -->
+                <!-- ============================================================== -->
+                {% else %}
+                <div class="row g-4 align-items-center mb-5">
+                    <div class="col-md-5 text-center">
+                        <div class="result-image-box p-2 bg-light rounded-4 border shadow-sm">
+                            <img src="{{ analysis.image_url }}" alt="Uploaded Sample" class="img-fluid rounded-3 mb-2" style="max-height: 240px; object-fit: contain;">
+                            <div class="small text-muted fw-semibold">Analyzed Sample Image</div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <span class="text-muted small text-uppercase fw-semibold">Identified Classification</span>
+                        <h3 class="fw-bold {% if analysis.is_healthy %}text-success{% else %}text-danger{% endif %} mt-1 mb-1">
+                            {{ analysis.title }}
+                        </h3>
+                        <p class="text-secondary fst-italic small mb-3">
+                            <i class="bi bi-tag me-1"></i> Category / Subtype: <strong>{{ analysis.subtitle }}</strong>
+                        </p>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small fw-bold mb-1">
+                                <span>Model Confidence Score</span>
+                                <span class="{% if analysis.is_healthy %}text-success{% else %}text-danger{% endif %}">{{ analysis.confidence }}%</span>
+                            </div>
+                            <div class="progress rounded-pill" style="height: 12px;">
+                                <div class="progress-bar {% if analysis.is_healthy %}bg-success{% else %}bg-danger{% endif %} rounded-pill progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ analysis.confidence }}%;" aria-valuenow="{{ analysis.confidence }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        {% if analysis.module == 'skin' %}
+                            <div class="p-3 bg-light rounded-3 border small">
+                                <strong>Clinical Note:</strong> {{ analysis.risk_notes }}
+                            </div>
+                        {% elif analysis.is_healthy %}
+                            <div class="p-2 bg-success bg-opacity-10 text-success rounded-3 small">
+                                <i class="bi bi-check-circle-fill me-1"></i> Foliage exhibits healthy chlorophyll distribution with no active necrosis.
+                            </div>
+                        {% else %}
+                            <div class="p-2 bg-danger bg-opacity-10 text-danger rounded-3 small">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> High statistical certainty of foliar pathogen presence requiring management.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h6 class="fw-bold text-dark mb-2">
+                                <i class="bi bi-eye text-primary me-2"></i>
+                                {% if analysis.module == 'skin' %}Lesion Description{% else %}Clinical Symptoms{% endif %}
+                            </h6>
+                            <p class="small text-muted mb-0">{{ analysis.symptoms }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h6 class="fw-bold text-dark mb-2">
+                                <i class="bi bi-shield-check text-success me-2"></i>
+                                {% if analysis.module == 'skin' %}ABCDE Criteria Assessment{% else %}Prevention Methods{% endif %}
+                            </h6>
+                            <p class="small text-muted mb-0">{{ analysis.prevention }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h6 class="fw-bold text-dark mb-2">
+                                <i class="bi bi-capsule text-warning me-2"></i>
+                                {% if analysis.module == 'skin' %}Clinical Referral Guidance{% else %}Recommended Care{% endif %}
+                            </h6>
+                            <p class="small text-muted mb-0">{{ analysis.treatment }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strict Disclaimers -->
+                <div class="alert alert-warning border-warning rounded-3 small mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    <strong>Important Ethical & Medical Notice:</strong>
+                    {% if analysis.module == 'skin' %}
+                        This artificial intelligence screening output is an educational research model trained on benchmark dermatoscopic data. It is <strong>strictly non-diagnostic</strong> and does not substitute for a professional biopsy or clinical examination by a licensed dermatologist.
+                    {% else %}
+                        This analysis is derived from convolutional neural network pattern recognition on agricultural benchmark datasets. It provides advisory guidance and does not replace certified agronomic consultation.
+                    {% endif %}
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 justify-content-between pt-3 border-top">
+                    {% if analysis.module == 'skin' %}
+                    <a href="{{ url_for('medical.skin_screening') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left me-1"></i> Screen Another Lesion
+                    </a>
+                    {% elif analysis.module == 'crop' %}
+                    <a href="{{ url_for('agriculture.crop_detection') }}" class="btn btn-outline-warning text-dark">
+                        <i class="bi bi-arrow-left me-1"></i> Analyze Another Crop
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('agriculture.plant_detection') }}" class="btn btn-outline-success">
+                        <i class="bi bi-arrow-left me-1"></i> Analyze Another Leaf
+                    </a>
+                    {% endif %}
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('dashboard.history') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history me-1"></i> View History
+                        </a>
+                        <button class="btn btn-success px-4" onclick="window.print()">
+                            <i class="bi bi-printer me-1"></i> Print Report
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                <i class="bi bi-clipboard2-x display-3 text-muted mb-3"></i>
+                <h4 class="fw-bold">No Active Analysis Found</h4>
+                <p class="text-muted">Please initiate an assessment through one of the analysis modules.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ url_for('agriculture.plant_detection') }}" class="btn btn-success px-3">Plant Module</a>
+                    <a href="{{ url_for('medical.symptoms_assessment') }}" class="btn btn-danger px-3">Symptoms Assessment</a>
+                    <a href="{{ url_for('medical.skin_screening') }}" class="btn btn-primary px-3">Skin Screening</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

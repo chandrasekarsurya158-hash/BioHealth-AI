@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Emergency Contacts & Specialist Directory - BioHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header Banner -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-4">
+                        <i class="bi bi-telephone-plus-fill fs-2"></i>
+                    </div>
+                    <div>
+                        <span class="badge bg-danger mb-1">National Support & Referral Network</span>
+                        <h2 class="fw-bold mb-0">Emergency Contacts & Specialist Consultation Directory</h2>
+                    </div>
+                </div>
+                <p class="text-muted mb-0">
+                    Verified clinical emergency contacts, certified tele-triage hotlines, and regional agricultural extension services for rapid offline intervention.
+                </p>
+            </div>
+
+            <!-- Urgent 24/7 National Emergency Hotlines -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-danger border-2 rounded-4 p-4 bg-white shadow-sm h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-danger text-white px-3 py-1">24/7 Emergency</span>
+                            <i class="bi bi-ambulance text-danger fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mt-2 mb-1">National Emergency</h4>
+                        <p class="small text-muted mb-3">All medical, trauma, ambulance, and disaster emergencies.</p>
+                        <div class="mt-auto">
+                            <a href="tel:112" class="btn btn-danger w-100 fw-bold py-2">
+                                <i class="bi bi-telephone-fill me-1"></i> Dial 112 (India / EU)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-primary px-3 py-1">Health Advisory</span>
+                            <i class="bi bi-hospital text-primary fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mt-2 mb-1">National Health Helpline</h4>
+                        <p class="small text-muted mb-3">Government health guidance, epidemic advisories, and hospital bed referrals.</p>
+                        <div class="mt-auto">
+                            <a href="tel:1075" class="btn btn-outline-primary w-100 fw-semibold py-2">
+                                <i class="bi bi-telephone-fill me-1"></i> Dial 1075
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-success px-3 py-1">Farming & Crops</span>
+                            <i class="bi bi-tree text-success fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mt-2 mb-1">Kisan Call Center</h4>
+                        <p class="small text-muted mb-3">Toll-free agricultural disease experts, pesticide advisories, and crop emergency counsel.</p>
+                        <div class="mt-auto">
+                            <a href="tel:18001801551" class="btn btn-outline-success w-100 fw-semibold py-2">
+                                <i class="bi bi-telephone-fill me-1"></i> 1800-180-1551
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specialized Clinical Support Hotlines -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-check text-primary me-2"></i>Specialized Medical Toll-Free Services</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Service Area</th>
+                                <th>Governing Body / Department</th>
+                                <th>Contact Number</th>
+                                <th>Operating Window</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold text-danger"><i class="bi bi-exclamation-diamond me-2"></i>Poison Information Center</td>
+                                <td>National Poison Information Center (AIIMS)</td>
+                                <td><a href="tel:1800116117" class="fw-bold text-decoration-none">1800-116-117</a> / 011-26589391</td>
+                                <td><span class="badge bg-success">24 Hours / 7 Days</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary"><i class="bi bi-heart-pulse me-2"></i>Tele-MANAS Mental Health</td>
+                                <td>Ministry of Health & Family Welfare</td>
+                                <td><a href="tel:14416" class="fw-bold text-decoration-none">14416</a> / 1800-891-4416</td>
+                                <td><span class="badge bg-success">24 Hours / 7 Days</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-info"><i class="bi bi-droplet me-2"></i>National Blood Bank Directory</td>
+                                <td>e-RaktKosh National Health Portal</td>
+                                <td><a href="tel:104" class="fw-bold text-decoration-none">104</a> (Select States)</td>
+                                <td><span class="badge bg-success">24 Hours / 7 Days</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-warning"><i class="bi bi-gender-female me-2"></i>Women & Child Helpline</td>
+                                <td>National Commission for Women</td>
+                                <td><a href="tel:1091" class="fw-bold text-decoration-none">1091</a> / 112</td>
+                                <td><span class="badge bg-success">24 Hours / 7 Days</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Clinical Referral Guidance: When to consult specialists -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <h4 class="fw-bold mb-4"><i class="bi bi-person-lines-fill text-success me-2"></i>When to Seek Specialist Referral</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light h-100">
+                            <h6 class="fw-bold text-primary"><i class="bi bi-bandaid me-2"></i>Certified Dermatologist</h6>
+                            <p class="small text-muted mb-2">Consult when skin lesions exhibit ABCDE criteria:</p>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li>Asymmetrical border with irregular pigmentation</li>
+                                <li>Diameter $> 6\text{ mm}$ or evolving rapidly over weeks</li>
+                                <li>Spontaneous bleeding, ulceration, or chronic crusting</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light h-100">
+                            <h6 class="fw-bold text-info"><i class="bi bi-lungs me-2"></i>Pulmonologist / Chest Physician</h6>
+                            <p class="small text-muted mb-2">Consult when thoracic symptoms include:</p>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li>Persistent cough lasting $> 3\text{ weeks}$</li>
+                                <li>Hemoptysis (coughing up blood), even in minor traces</li>
+                                <li>Unexplained pleuritic chest pain or resting dyspnea</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
