@@ -9,17 +9,19 @@ admin_bp = Blueprint("admin", __name__)
 @admin_bp.route("/login", methods=["GET", "POST"])
 def login():
     """Page 16: Admin authentication against MySQL admins or users table."""
+    db_available = test_connection()
+
     if request.method == "POST":
         admin_key = request.form.get("admin_key", "").strip()
         password = request.form.get("password", "")
 
         if not admin_key or not password:
             flash("Administrator username/email and password required.", "danger")
-            return render_template("admin/login.html")
+            return render_template("admin/login.html", db_available=db_available)
 
-        if not test_connection():
-            flash("Database offline. Ensure MySQL is running in XAMPP.", "danger")
-            return render_template("admin/login.html")
+        if not db_available:
+            flash("Admin authentication requires a connected database. This demo deployment does not have a persistent database configured.", "warning")
+            return render_template("admin/login.html", db_available=db_available)
 
         try:
             # 1. Try admins table first
@@ -59,7 +61,7 @@ def login():
         except Exception as e:
             flash(f"Authentication error: {str(e)}", "danger")
 
-    return render_template("admin/login.html")
+    return render_template("admin/login.html", db_available=db_available)
 
 @admin_bp.route("/dashboard")
 @admin_required

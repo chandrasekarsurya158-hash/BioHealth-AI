@@ -4,9 +4,15 @@ from app.models.db import test_connection
 
 auth_bp = Blueprint("auth", __name__)
 
+def _db_up():
+    """Returns True if the database is reachable, False otherwise (silent)."""
+    return test_connection()
+
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     """Page 3: User registration with MySQL database storage and hashing."""
+    db_available = _db_up()
+
     if request.method == "POST":
         fullname = request.form.get("fullname", "").strip()
         email = request.form.get("email", "").strip().lower()
@@ -16,19 +22,19 @@ def register():
         # Validation checks
         if not fullname or not email or not password:
             flash("All fields are required.", "danger")
-            return render_template("auth/register.html")
+            return render_template("auth/register.html", db_available=db_available)
 
         if len(password) < 6:
             flash("Password must be at least 6 characters long.", "warning")
-            return render_template("auth/register.html")
+            return render_template("auth/register.html", db_available=db_available)
 
         if password != confirm_password:
             flash("Passwords do not match.", "warning")
-            return render_template("auth/register.html")
+            return render_template("auth/register.html", db_available=db_available)
 
-        if not test_connection():
-            flash("Database connection unavailable. Please ensure MySQL is running in XAMPP.", "danger")
-            return render_template("auth/register.html")
+        if not db_available:
+            flash("Account registration requires a connected database. This demo deployment does not have a persistent database configured.", "warning")
+            return render_template("auth/register.html", db_available=db_available)
 
         try:
             user_id = UserModel.create_user(fullname, email, password)
@@ -40,22 +46,24 @@ def register():
         except Exception as e:
             flash(f"Registration error: {str(e)}", "danger")
 
-    return render_template("auth/register.html")
+    return render_template("auth/register.html", db_available=db_available)
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     """Page 4: User authentication against MySQL users table."""
+    db_available = _db_up()
+
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
 
         if not email or not password:
             flash("Please enter both email and password.", "danger")
-            return render_template("auth/login.html")
+            return render_template("auth/login.html", db_available=db_available)
 
-        if not test_connection():
-            flash("Cannot connect to MySQL database. Please start MySQL in XAMPP.", "danger")
-            return render_template("auth/login.html")
+        if not db_available:
+            flash("Sign-in requires a connected database. This demo deployment does not have a persistent database configured.", "warning")
+            return render_template("auth/login.html", db_available=db_available)
 
         try:
             user = UserModel.get_by_email(email)
@@ -85,7 +93,7 @@ def login():
         except Exception as e:
             flash(f"Login error: {str(e)}", "danger")
 
-    return render_template("auth/login.html")
+    return render_template("auth/login.html", db_available=db_available)
 
 @auth_bp.route("/logout")
 def logout():

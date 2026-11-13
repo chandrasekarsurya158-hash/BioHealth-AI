@@ -6,6 +6,17 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-7 col-lg-5">
+
+            {% if not db_available %}
+            <div class="alert alert-info d-flex align-items-start gap-2 mb-4 rounded-3 shadow-sm border-0" role="alert">
+                <i class="bi bi-info-circle-fill fs-5 mt-1 flex-shrink-0"></i>
+                <div>
+                    <strong>Demo Mode — No Database Connected</strong><br>
+                    <small>This public deployment does not have a persistent database. Registration is unavailable. You can still freely explore all AI detection tools, the emergency directory, and pharmacopeia reference — no account needed.</small>
+                </div>
+            </div>
+            {% endif %}
+
             <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
                 <div class="text-center mb-4">
                     <div class="brand-icon mx-auto mb-2 text-success fs-1">
@@ -20,7 +31,7 @@
                         <label for="fullname" class="form-label fw-semibold small">Full Name</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                            <input type="text" class="form-control bg-light border-start-0" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                            <input type="text" class="form-control bg-light border-start-0" id="fullname" name="fullname" placeholder="Enter your full name" {% if not db_available %}disabled{% endif %} required>
                         </div>
                     </div>
 
@@ -28,7 +39,7 @@
                         <label for="email" class="form-label fw-semibold small">Email Address</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
-                            <input type="email" class="form-control bg-light border-start-0" id="email" name="email" placeholder="name@example.com" required>
+                            <input type="email" class="form-control bg-light border-start-0" id="email" name="email" placeholder="name@example.com" {% if not db_available %}disabled{% endif %} required>
                         </div>
                     </div>
 
@@ -36,7 +47,7 @@
                         <label for="password" class="form-label fw-semibold small">Password</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                            <input type="password" class="form-control bg-light border-start-0" id="password" name="password" placeholder="Create strong password" required minlength="6">
+                            <input type="password" class="form-control bg-light border-start-0" id="password" name="password" placeholder="Create strong password" {% if not db_available %}disabled{% endif %} required minlength="6">
                         </div>
                     </div>
 
@@ -44,18 +55,18 @@
                         <label for="confirm_password" class="form-label fw-semibold small">Confirm Password</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
-                            <input type="password" class="form-control bg-light border-start-0" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required minlength="6">
+                            <input type="password" class="form-control bg-light border-start-0" id="confirm_password" name="confirm_password" placeholder="Repeat your password" {% if not db_available %}disabled{% endif %} required minlength="6">
                         </div>
                     </div>
 
                     <div class="form-check mb-4">
-                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                        <input class="form-check-input" type="checkbox" id="termsCheck" {% if not db_available %}disabled{% endif %} required>
                         <label class="form-check-label small text-muted" for="termsCheck">
-                            I agree to the research & privacy terms and understand this tool does not provide confirmed clinical diagnoses.
+                            I agree to the research &amp; privacy terms and understand this tool does not provide confirmed clinical diagnoses.
                         </label>
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold rounded-3 shadow-sm">
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold rounded-3 shadow-sm" {% if not db_available %}disabled{% endif %}>
                         <i class="bi bi-check2-circle me-1"></i> Register Account
                     </button>
                 </form>
@@ -64,8 +75,8 @@
                     <p class="small text-muted mb-0">Already registered? <a href="{{ url_for('auth.login') }}" class="text-success fw-semibold text-decoration-none">Sign in here</a></p>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 {% endblock %}
-
