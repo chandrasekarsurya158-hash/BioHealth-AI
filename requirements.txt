@@ -1,23 +1,17 @@
 # Multi-Domain AI-Based Disease Detection and Intelligent Health Assistance System
-# Compatible with Python 3.9 - 3.13 on Windows
+# Production Runtime Requirements (Vercel Serverless & Production Compatible)
 
-# Web Backend
+# Web Framework & Core
 Flask>=3.0.0
 Werkzeug>=3.0.0
 python-dotenv>=1.0.0
 
-# Database (Pure Python - 100% Windows & XAMPP compatible)
+# Database Access (Pure Python - 100% Cloud & XAMPP compatible)
 PyMySQL>=1.1.0
-cryptography>=42.0.0
 
-# Image and Document Processing
+# Image Processing & AI Inference
 Pillow>=10.0.0
-PyMuPDF>=1.24.0
-pytesseract>=0.3.10
-numpy>=2.1.0
-pandas>=2.2.0
-opencv-python-headless>=4.10.0.84
+numpy>=1.24.0
 
-# Scientific & ML Utilities
-scikit-learn>=1.5.0
-requests>=2.31.0
+# Clinical Document Parsing (PyMuPDF)
+PyMuPDF>=1.24.0
