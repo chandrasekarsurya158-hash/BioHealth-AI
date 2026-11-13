@@ -1,0 +1,45 @@
+services:
+  web:
+    build: .
+    container_name: biohealth_web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=biohealth-secure-production-key-change-me
+      - FLASK_ENV=production
+      - DB_HOST=db
+      - DB_USER=biohealth_user
+      - DB_PASSWORD=biohealth_pass
+      - DB_NAME=multi_disease_db
+      - DB_PORT=3306
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app/static/uploads:/app/app/static/uploads
+
+  db:
+    image: mysql:8.0
+    container_name: biohealth_mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secure_pass
+      MYSQL_DATABASE: multi_disease_db
+      MYSQL_USER: biohealth_user
+      MYSQL_PASSWORD: biohealth_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secure_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+
