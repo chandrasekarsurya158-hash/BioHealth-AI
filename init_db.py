@@ -28,13 +28,14 @@ def initialize_database():
             password=Config.DB_PASSWORD,
             port=Config.DB_PORT,
             charset="utf8mb4",
-            autocommit=True
+            autocommit=True,
+            connect_timeout=10
         )
         cursor = conn.cursor()
-        print("\n [OK] Connected to XAMPP MySQL service successfully.")
+        print(f"\n [OK] Connected to MySQL server at {Config.DB_HOST}:{Config.DB_PORT} successfully.")
     except Exception as e:
         print(f"\n [ERROR] Could not connect to MySQL server: {e}")
-        print("         Please open XAMPP Control Panel and ensure MySQL is running.")
+        print("         Please check your DB_HOST, DB_USER, DB_PASSWORD and DB_PORT environment variables.")
         sys.exit(1)
 
     # Step 2: Create Database if not exists
@@ -187,8 +188,7 @@ def initialize_database():
     conn.close()
 
     print_banner("Database Setup Completed Successfully!")
-    print(" You can view your tables in phpMyAdmin: http://localhost/phpmyadmin")
-    print(" Database name: multi_disease_db")
+    print(f" Database: {Config.DB_NAME} @ {Config.DB_HOST}:{Config.DB_PORT}")
     print(" Default Admin: admin / admin123")
     print("=" * 65 + "\n")
 
