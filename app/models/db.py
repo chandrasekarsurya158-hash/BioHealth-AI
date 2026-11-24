@@ -1,3 +1,4 @@
+import ssl
 import pymysql
 from pymysql.cursors import DictCursor
 from config import Config
@@ -8,6 +9,10 @@ def get_db_connection():
     Creates and returns a connection to the MySQL database.
     Uses DictCursor so results are accessible via column names as dictionaries.
     """
+    connection_options = {}
+    if Config.DB_SSL:
+        connection_options["ssl"] = ssl.create_default_context()
+
     return pymysql.connect(
         host=Config.DB_HOST,
         user=Config.DB_USER,
@@ -16,8 +21,9 @@ def get_db_connection():
         port=Config.DB_PORT,
         cursorclass=DictCursor,
         autocommit=True,
-        charset='utf8mb4',
-        connect_timeout=3
+        charset="utf8mb4",
+        connect_timeout=3,
+        **connection_options,
     )
 
 @contextmanager

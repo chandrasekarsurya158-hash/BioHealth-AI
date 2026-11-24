@@ -4,6 +4,7 @@ Multi-Domain AI Disease Detection & Intelligent Health Assistance System
 """
 
 import sys
+import ssl
 from pathlib import Path
 from werkzeug.security import generate_password_hash
 import pymysql
@@ -22,6 +23,10 @@ def initialize_database():
 
     # Step 1: Connect to MySQL server
     try:
+        connection_options = {}
+        if Config.DB_SSL:
+            connection_options["ssl"] = ssl.create_default_context()
+
         conn = pymysql.connect(
             host=Config.DB_HOST,
             user=Config.DB_USER,
@@ -29,7 +34,8 @@ def initialize_database():
             port=Config.DB_PORT,
             charset="utf8mb4",
             autocommit=True,
-            connect_timeout=10
+            connect_timeout=10,
+            **connection_options,
         )
         cursor = conn.cursor()
         print(f"\n [OK] Connected to MySQL server at {Config.DB_HOST}:{Config.DB_PORT} successfully.")

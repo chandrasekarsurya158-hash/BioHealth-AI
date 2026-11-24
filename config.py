@@ -18,6 +18,7 @@ class Config:
     DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
     DB_NAME = os.environ.get("DB_NAME", "multi_disease_db")
     DB_PORT = int(os.environ.get("DB_PORT", 3306))
+    DB_SSL = os.environ.get("DB_SSL", "").strip().lower() in {"1", "true", "yes"}
     
     # Serverless cloud environment detection (Vercel, AWS Lambda, Render, etc.)
     IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
