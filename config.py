@@ -37,6 +37,8 @@ class Config:
     
     # Model Weights Folder
     MODELS_DIR = BASE_DIR / "ml_models"
+    # CSV Datasets Folder
+    DATASETS_DIR = BASE_DIR / "datasets"
     
     # Allowed file extensions for security
     ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg"}
